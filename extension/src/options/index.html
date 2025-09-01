@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>System Prompt Manager for AI Studio — Options</title>
+    <link rel="stylesheet" href="../shared/ui.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>System Prompt Manager for AI Studio — Options</h1>
+
+      <section class="card">
+        <h2>Settings</h2>
+        <div class="grid">
+          <label>Insert mode
+            <select id="insertMode">
+              <option value="replace">Replace</option>
+              <option value="append">Append</option>
+              <option value="prepend">Prepend</option>
+            </select>
+          </label>
+          <label>
+            <span>Show context menu on AI Studio</span>
+            <input type="checkbox" id="showContextMenu">
+          </label>
+          <label>
+            <span>Ask before overwriting system instructions</span>
+            <input type="checkbox" id="confirmOverwriteSystem">
+          </label>
+          <label>Theme
+            <select id="theme">
+              <option value="auto">Auto (system)</option>
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Profiles</h2>
+        <div class="row">
+          <input id="name" placeholder="Profile name" />
+          <button id="add" class="btn-primary">Add / Update</button>
+        </div>
+        <textarea id="content" placeholder="Profile content..."></textarea>
+        <div class="row right">
+          <button id="export">Export JSON</button>
+          <input type="file" id="importFile" accept="application/json" style="display:none" />
+          <button id="import">Import JSON</button>
+        </div>
+        <table>
+          <thead>
+            <tr><th style="width: 240px;">Name</th><th>Content</th><th class="actions">Actions</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <p class="muted">Tip: Keyboard shortcuts can be changed in chrome://extensions/shortcuts</p>
+      </section>
+
+      <p class="muted" style="text-align:center;">
+        Built by
+        <a href="https://x.com/HCSolakoglu" target="_blank" rel="noopener noreferrer">@HCSolakoglu</a>
+        ·
+        <a href="https://github.com/hcsolakoglu/system-prompt-manager-ai-studio" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </p>
+
+      <script type="module" src="./main.ts"></script>
+    </div>
+  </body>
+</html>

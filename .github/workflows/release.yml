@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc -p tsconfig.json
+
+      - name: Build
+        run: npm run build
+
+      - name: Determine package info
+        id: pkg
+        run: |
+          NAME=$(node -p "require('./package.json').name || 'system-prompt-manager-for-ai-studio'")
+          VERSION=$(node -p "require('./package.json').version")
+          echo "NAME=$NAME" >> $GITHUB_ENV
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "name=$NAME" >> $GITHUB_OUTPUT
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create zip from dist
+        run: |
+          mkdir -p release
+          cd dist
+          zip -r ../release/chrome-web-store-v${{ steps.pkg.outputs.version }}.zip .
+          cd -
+
+      - name: Upload Chrome Web Store zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-web-store-${{ steps.pkg.outputs.version }}
+          path: release/chrome-web-store-v${{ steps.pkg.outputs.version }}.zip
+          if-no-files-found: error
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ env.VERSION }}
+          path: dist
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release v${{ steps.pkg.outputs.version }}
+          draft: false
+          prerelease: false
+          body: |
+            Chrome Web Store package: download the asset named `chrome-web-store-v${{ steps.pkg.outputs.version }}.zip`. Do NOT use "Source code (zip)" — that contains the repository and cannot be installed in Chrome.
+          files: |
+            release/chrome-web-store-v${{ steps.pkg.outputs.version }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "System Prompt Manager for AI Studio",
+  "short_name": "System Prompt Manager",
+  "description": "Save and quickly insert system message profiles on Google AI Studio.",
+  "version": "0.1.6",
+  "homepage_url": "https://github.com/hcsolakoglu/system-prompt-manager-ai-studio",
+  "icons": {
+    "16": "extension/icons/icon-16.png",
+    "32": "extension/icons/icon-32.png",
+    "48": "extension/icons/icon-48.png",
+    "128": "extension/icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "extension/src/popup/index.html",
+    "default_title": "System Prompt Manager for AI Studio",
+    "default_icon": {
+      "16": "extension/icons/icon-16.png",
+      "32": "extension/icons/icon-32.png",
+      "48": "extension/icons/icon-48.png"
+    }
+  },
+  "permissions": [
+    "storage",
+    "activeTab",
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "extension/src/background/index.ts",
+    "type": "module"
+  },
+  "options_page": "extension/src/options/index.html",
+  "content_scripts": [
+    {
+      "matches": ["https://aistudio.google.com/*"],
+      "js": ["extension/src/content/index.ts"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "open_palette": {
+      "suggested_key": { "default": "Alt+Shift+1", "mac": "Alt+Shift+1" },
+      "description": "Open profiles popup"
+    },
+    "insert_last_profile": {
+      "suggested_key": { "default": "Alt+Shift+2", "mac": "Alt+Shift+2" },
+      "description": "Insert last used profile"
+    }
+  }
+}

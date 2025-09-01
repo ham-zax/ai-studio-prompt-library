@@ -33,7 +33,7 @@ jobs:
       - name: Determine package info
         id: pkg
         run: |
-          NAME=$(node -p "require('./package.json').name || 'system-prompt-manager-for-ai-studio'")
+          NAME=$(node -p "require('./package.json').name || 'ai-studio-prompt-library'")
           VERSION=$(node -p "require('./package.json').version")
           echo "NAME=$NAME" >> $GITHUB_ENV
           echo "VERSION=$VERSION" >> $GITHUB_ENV

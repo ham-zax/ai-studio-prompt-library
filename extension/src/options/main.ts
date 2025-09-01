@@ -142,7 +142,7 @@ async function main() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'system-prompt-manager-for-ai-studio.json';
+    a.download = 'ai-studio-prompt-library.json';
     a.click();
     URL.revokeObjectURL(url);
   });

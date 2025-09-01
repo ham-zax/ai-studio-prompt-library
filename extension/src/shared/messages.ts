@@ -6,4 +6,8 @@ export type MsgInsertProfile = {
   mode?: InsertMode;
 };
 
-export type RuntimeMessage = MsgInsertProfile;
+export type MsgProfilesUpdated = {
+  type: 'PROFILES_UPDATED';
+};
+
+export type RuntimeMessage = MsgInsertProfile | MsgProfilesUpdated;

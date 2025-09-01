@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "System Prompt Manager for AI Studio",
-  "short_name": "System Prompt Manager",
-  "description": "Save and quickly insert system message profiles on Google AI Studio.",
+  "name": "AI Studio Prompt Library",
+  "short_name": "System Prompts",
+  "description": "Save and quickly insert system prompts (system messages) on Google AI Studio.",
   "version": "0.1.6",
-  "homepage_url": "https://github.com/hcsolakoglu/system-prompt-manager-ai-studio",
+  "homepage_url": "https://github.com/ham-zax/ai-studio-prompt-library",
   "icons": {
     "16": "extension/icons/icon-16.png",
     "32": "extension/icons/icon-32.png",
@@ -13,7 +13,7 @@
   },
   "action": {
     "default_popup": "extension/src/popup/index.html",
-    "default_title": "System Prompt Manager for AI Studio",
+    "default_title": "System Prompts Manager",
     "default_icon": {
       "16": "extension/icons/icon-16.png",
       "32": "extension/icons/icon-32.png",
@@ -40,11 +40,11 @@
   "commands": {
     "open_palette": {
       "suggested_key": { "default": "Alt+Shift+1", "mac": "Alt+Shift+1" },
-      "description": "Open profiles popup"
+      "description": "Open system prompts popup"
     },
     "insert_last_profile": {
       "suggested_key": { "default": "Alt+Shift+2", "mac": "Alt+Shift+2" },
-      "description": "Insert last used profile"
+      "description": "Insert last used prompt"
     }
   }
 }

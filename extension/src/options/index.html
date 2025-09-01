@@ -3,67 +3,251 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>System Prompt Manager for AI Studio — Options</title>
+    <title>AI Studio Prompt Library — Options</title>
     <link rel="stylesheet" href="../shared/ui.css" />
+    <style>
+      /* Layout */
+      .main-grid {
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+      @media (max-width: 800px) {
+        .main-grid { grid-template-columns: 1fr; }
+      }
+
+      /* Settings card tweaks */
+      .settings-column .card { margin-bottom: 16px; }
+      .setting-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 10px 0;
+      }
+      /* Ensure label truncates and controls stay compact */
+      .setting-row label { margin: 0; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .checkbox-row { align-items: center; }
+
+      /* Keep controls compact and aligned on the right */
+      .setting-row > select,
+      .setting-row > input[type="checkbox"],
+      .setting-row > input[type="text"] {
+        flex: 0 0 auto;
+      }
+
+      /* Slight visual tweak for checkboxes so they align with text baseline */
+      .setting-row input[type="checkbox"] {
+        width: auto;
+        height: auto;
+        transform: translateY(1px);
+      }
+
+      /* Profiles column */
+      .profiles-column .card { display: flex; flex-direction: column; gap: 12px; }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .header-actions { display:flex; gap:8px; align-items:center; }
+
+      .profile-form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        align-items: start;
+      }
+      .profile-form input#name { width: 100%; }
+      .profile-form textarea#content {
+        grid-column: 1 / -1;
+        min-height: 120px;
+        resize: vertical;
+        margin-top: 8px;
+      }
+      .form-actions {
+        display:flex;
+        gap:8px;
+        align-items:center;
+      }
+
+      .profile-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 360px;
+        overflow: auto;
+        border-top: 1px solid var(--border);
+        padding-top: 12px;
+      }
+
+      /* Dialog styling: ensure modal matches theme (dark/light) and override UA defaults */
+      dialog.edit-dialog {
+        border: none;
+        background: transparent;
+        color: var(--fg);
+      }
+      dialog.edit-dialog form {
+        background: var(--card) !important;
+        color: var(--fg) !important;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px;
+        box-shadow: 0 8px 24px rgba(2,6,23,0.5);
+        font-family: inherit;
+      }
+      /* Ensure the dialog backdrop follows theme */
+      dialog.edit-dialog::backdrop {
+        background: color-mix(in srgb, var(--bg) 60%, transparent);
+        backdrop-filter: blur(2px);
+      }
+      /* Remove default dialog padding when open so the form sizing is consistent */
+      dialog[open] { padding: 0; }
+
+      .profile-list li {
+        display:flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        padding: 10px;
+        border-radius: 6px;
+        background: var(--card-bg);
+        box-shadow: var(--card-shadow);
+      }
+      .profile-list .info {
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+      .profile-list .name {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+      .profile-list .content {
+        color: var(--muted);
+        font-size: 12px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+      }
+      .profile-list .actions {
+        display:flex;
+        gap:8px;
+        align-items:center;
+      }
+      .profile-list button { white-space: nowrap; }
+
+      /* File input hidden but accessible */
+      input[type="file"] { display: none; }
+
+      /* Small utility */
+      .muted-inline { color: var(--muted); font-size: 12px; margin-left:8px; }
+    </style>
   </head>
   <body>
     <div class="container">
-      <h1>System Prompt Manager for AI Studio — Options</h1>
+      <h1>AI Studio Prompt Library — Options</h1>
 
-      <section class="card">
-        <h2>Settings</h2>
-        <div class="grid">
-          <label>Insert mode
-            <select id="insertMode">
-              <option value="replace">Replace</option>
-              <option value="append">Append</option>
-              <option value="prepend">Prepend</option>
-            </select>
-          </label>
-          <label>
-            <span>Show context menu on AI Studio</span>
-            <input type="checkbox" id="showContextMenu">
-          </label>
-          <label>
-            <span>Ask before overwriting system instructions</span>
-            <input type="checkbox" id="confirmOverwriteSystem">
-          </label>
-          <label>Theme
-            <select id="theme">
-              <option value="auto">Auto (system)</option>
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-            </select>
-          </label>
-        </div>
-      </section>
+      <div class="main-grid">
+        <div class="settings-column">
+          <section class="card">
+            <h2>Settings</h2>
+            <div class="setting-row">
+              <label for="insertMode">Insert mode</label>
+              <select id="insertMode">
+                <option value="replace">Replace</option>
+                <option value="append">Append</option>
+                <option value="prepend">Prepend</option>
+              </select>
+            </div>
 
-      <section class="card">
-        <h2>Profiles</h2>
-        <div class="row">
-          <input id="name" placeholder="Profile name" />
-          <button id="add" class="btn-primary">Add / Update</button>
-        </div>
-        <textarea id="content" placeholder="Profile content..."></textarea>
-        <div class="row right">
-          <button id="export">Export JSON</button>
-          <input type="file" id="importFile" accept="application/json" style="display:none" />
-          <button id="import">Import JSON</button>
-        </div>
-        <table>
-          <thead>
-            <tr><th style="width: 240px;">Name</th><th>Content</th><th class="actions">Actions</th></tr>
-          </thead>
-          <tbody id="rows"></tbody>
-        </table>
-        <p class="muted">Tip: Keyboard shortcuts can be changed in chrome://extensions/shortcuts</p>
-      </section>
+            <div class="setting-row checkbox-row">
+              <label for="showContextMenu">Show context menu on AI Studio</label>
+              <input type="checkbox" id="showContextMenu">
+            </div>
 
-      <p class="muted" style="text-align:center;">
+            <div class="setting-row checkbox-row">
+              <label for="confirmOverwriteSystem">Ask before overwriting system instructions</label>
+              <input type="checkbox" id="confirmOverwriteSystem">
+            </div>
+
+            <div class="setting-row">
+              <label for="theme">Theme</label>
+              <select id="theme">
+                <option value="auto">Auto (system)</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+
+            <hr style="border-color:var(--border); margin:16px 0;">
+
+            <div>
+              <h3 style="margin:0 0 8px 0;">Advanced</h3>
+              <div class="setting-row">
+                <label for="customSelector">Custom Selector (Optional)</label>
+                <input type="text" id="customSelector" placeholder="e.g., textarea[data-test-id='system-prompt']" />
+              </div>
+              <p class="muted">Override the default method for finding the system instructions field. Use a valid CSS selector. Only change this if the extension stops working correctly.</p>
+            </div>
+          </section>
+        </div>
+
+        <div class="profiles-column">
+          <section class="card">
+            <div class="card-header">
+              <h2>System Prompts</h2>
+              <div class="header-actions">
+                <button id="export">Export JSON</button>
+                <button id="import">Import JSON</button>
+                <input type="file" id="importFile" accept="application/json" />
+              </div>
+            </div>
+
+            <input type="hidden" id="editingId" />
+
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div style="color:var(--muted); font-size:13px;">Use the button to add or edit prompts</div>
+              <div>
+                <button id="add" class="btn-primary">Add Prompt</button>
+                <button id="clearForm" style="display:none;">Cancel</button>
+              </div>
+            </div>
+
+            <dialog id="editDialog" class="edit-dialog" aria-modal="true">
+              <form method="dialog" style="width:560px; max-width:90vw;">
+                <h3 id="dialogTitle" style="margin:0 0 8px 0;">Add / Edit Prompt</h3>
+                <div style="margin-top:8px;">
+                  <label for="name" style="display:block; margin-bottom:6px;">Name</label>
+                  <input id="name" placeholder="Prompt name" style="width:100%;" />
+                </div>
+                <div style="margin-top:8px;">
+                  <label for="content" style="display:block; margin-bottom:6px;">Content</label>
+                  <textarea id="content" placeholder="Prompt content..." style="width:100%; min-height:160px;"></textarea>
+                </div>
+                <menu style="display:flex; gap:8px; justify-content:flex-end; margin-top:12px;">
+                  <button id="dialogCancel" type="button">Cancel</button>
+                  <button id="dialogSave" type="submit" class="btn-primary">Save</button>
+                </menu>
+              </form>
+            </dialog>
+
+            <ul class="profile-list" id="rows" aria-live="polite"></ul>
+
+            <p class="muted">Tip: Keyboard shortcuts can be changed in chrome://extensions/shortcuts</p>
+          </section>
+        </div>
+      </div>
+
+      <p class="muted" style="text-align:center; margin-top:20px;">
         Built by
-        <a href="https://x.com/HCSolakoglu" target="_blank" rel="noopener noreferrer">@HCSolakoglu</a>
+        <a href="https://x.com/ham_zax" target="_blank" rel="noopener noreferrer">@ham_zax</a>
         ·
-        <a href="https://github.com/hcsolakoglu/system-prompt-manager-ai-studio" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://github.com/ham-zax/ai-studio-prompt-library" target="_blank" rel="noopener noreferrer">GitHub</a>
       </p>
 
       <script type="module" src="./main.ts"></script>

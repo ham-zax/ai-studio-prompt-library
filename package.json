@@ -1,5 +1,5 @@
 {
-  "name": "system-prompt-manager-for-ai-studio",
+  "name": "ai-studio-prompt-library",
   "version": "0.1.6",
   "private": true,
   "type": "module",
@@ -7,14 +7,14 @@
     "dev": "vite",
     "build": "vite build"
   },
-  "author": "Hakan Can Solakoğlu (X: @HCSolakoglu)",
-  "homepage": "https://github.com/hcsolakoglu/system-prompt-manager-ai-studio",
+  "author": "Hakan Can Solakoğlu (linkedin: https://www.linkedin.com/in/hamzax/)",
+  "homepage": "https://github.com/ham-zax/ai-studio-prompt-library",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hcsolakoglu/system-prompt-manager-ai-studio.git"
+    "url": "git+https://github.com/ham-zax/ai-studio-prompt-library.git"
   },
   "bugs": {
-    "url": "https://github.com/hcsolakoglu/system-prompt-manager-ai-studio/issues"
+    "url": "https://github.com/ham-zax/ai-studio-prompt-library/issues"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.2.0",

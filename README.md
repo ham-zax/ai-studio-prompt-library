@@ -1,12 +1,12 @@
-# System Prompt Manager for AI Studio (Chrome MV3)
+# AI Studio Prompt Library (Chrome MV3)
 
-Repository/Homepage: https://github.com/hcsolakoglu/system-prompt-manager-ai-studio
+Repository/Homepage: https://github.com/ham-zax/ai-studio-prompt-library
 
-Save and quickly insert reusable "System instructions" profiles on Google AI Studio.
+Save and quickly insert reusable System Prompts (system instructions) on Google AI Studio.
 
 - Manifest v3, TypeScript, Vite + @crxjs
-- Popup to search/select and insert
-- Options page for profiles CRUD + import/export
+- Popup to search/select and insert System Prompts
+- Options page for System Prompts CRUD + import/export
 - Background handles keyboard shortcuts and context menu
 - Content script inserts into the System instructions textarea (selectors tuned from live DOM)
 
@@ -14,7 +14,7 @@ Save and quickly insert reusable "System instructions" profiles on Google AI Stu
 
 ### Install from GitHub Releases (no build)
 
-1. Go to Releases: https://github.com/hcsolakoglu/system-prompt-manager-ai-studio/releases
+1. Go to Releases: https://github.com/ham-zax/ai-studio-prompt-library/releases
 2. Download the latest prebuilt archive
 3. Extract the archive locally
 4. Open your browser’s extensions page and enable Developer mode
@@ -41,7 +41,7 @@ Not affiliated with or endorsed by Google. Do not use Google/AI Studio logos in 
 
 ## Privacy
 
-This extension does not collect, transmit, sell, or share any personal information. Your data stays in your browser via Chrome storage. See the full policy in [PRIVACY.md](https://github.com/hcsolakoglu/system-prompt-manager-ai-studio/blob/main/PRIVACY.md).
+This extension does not collect, transmit, sell, or share any personal information. Your data stays in your browser via Chrome storage. See the full policy in [PRIVACY.md](https://github.com/ham-zax/ai-studio-prompt-library/blob/main/PRIVACY.md).
 
 ## Development
 
@@ -56,8 +56,8 @@ pnpm dev # or npm run dev
 3. In Chrome: Extensions → Enable Developer mode → Load unpacked → select the `dist` folder created by Vite.
 
 ## Shortcuts
-- Open popup: Alt+Shift+1
-- Insert last profile: Alt+Shift+2
+- Open System Prompts popup: Alt+Shift+1
+- Insert last used System Prompt: Alt+Shift+2
 
 These can be changed at chrome://extensions/shortcuts
 
@@ -66,7 +66,7 @@ These can be changed at chrome://extensions/shortcuts
 - content_scripts matches: https://aistudio.google.com/*
 
 Rationale:
-- `storage`: Save profiles and settings locally (and sync if Chrome sync is enabled).
+- `storage`: Save System Prompts and settings locally (and sync if Chrome sync is enabled).
 - `activeTab`: Access the currently active tab (after a user action like opening the popup or using a shortcut) to query it and send a message to the content script that performs insertion.
 - `contextMenus`: Provide right‑click actions for quick access.
 - Content script is statically declared in `manifest.json` and runs only on `https://aistudio.google.com/*`. No dynamic code injection (`scripting`) is used, and we do not request the broader `tabs` permission.
@@ -76,7 +76,8 @@ MIT
 
 ## Built by
 
-Created and maintained by **Hasan Can Solakoğlu**.
+Created and maintained by **Ahmed Hamza**.
 
-- X/Twitter: https://x.com/HCSolakoglu
-- GitHub: https://github.com/hcsolakoglu/system-prompt-manager-ai-studio
+- X/Twitter: https://x.com/ham_zax
+- LinkedIn: https://www.linkedin.com/in/hamzax/
+- GitHub: https://github.com/ham-zax/ai-studio-prompt-library

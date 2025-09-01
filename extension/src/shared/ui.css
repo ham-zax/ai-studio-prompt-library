@@ -63,7 +63,7 @@ input[type="text"], input[type="file"], input[type="checkbox"], select, textarea
   font: inherit;
 }
 input, select, textarea {
-  width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--fg);
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--fg);
 }
 input:focus, select:focus, textarea:focus { outline: none; border-color: var(--ring); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ring) 20%, transparent); }
 textarea { height: 160px; resize: vertical; }
@@ -87,7 +87,8 @@ tbody tr:last-child td { border-bottom: none; }
 
 /* Popup overrides */
 html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); }
-.container {
+/* Limit width only for popup-style containers (use .container.card in popup) */
+.container.card {
   padding: 12px;
   width: min(420px, 92vw);
   min-width: 360px;

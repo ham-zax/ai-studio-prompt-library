@@ -17,10 +17,12 @@ async function sendInsert(profile: Profile) {
 }
 
 
-function render(profiles: Profile[]) {
+function renderList(profiles: Profile[], query: string) {
   const ul = document.getElementById('list')!;
   ul.innerHTML = '';
-  profiles.forEach(p => {
+  const lowerQuery = query.toLowerCase();
+  const filtered = profiles.filter(p => p.name.toLowerCase().includes(lowerQuery) || p.content.toLowerCase().includes(lowerQuery));
+  filtered.forEach(p => {
     const li = document.createElement('li');
     const name = document.createElement('div');
     name.className = 'name';
@@ -48,15 +50,28 @@ async function main() {
   applyTheme(state.settings.theme ?? 'auto');
   const input = document.getElementById('search') as HTMLInputElement;
   const openOptions = document.getElementById('openOptions') as HTMLAnchorElement;
-  let list = state.profiles.slice();
-  const update = () => {
-    const q = input.value.toLowerCase();
-    const filtered = list.filter(p => p.name.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
-    render(filtered);
+
+  // Local mutable copy of profiles so we can refresh the list without re-querying DOM callers.
+  const localState = { ...state, profiles: state.profiles.slice() };
+
+  const refreshList = (profiles: Profile[]) => {
+    renderList(profiles, input.value);
   };
-  input.addEventListener('input', update);
+
+  input.addEventListener('input', () => refreshList(localState.profiles));
   openOptions.addEventListener('click', (e) => { e.preventDefault(); chrome.runtime.openOptionsPage(); });
-  update();
+  refreshList(localState.profiles);
+
+  // Listen for broadcasts and refresh the list when profiles change elsewhere.
+  chrome.runtime.onMessage.addListener((msg: any, _sender: chrome.runtime.MessageSender, _sendResponse?: (response?: any) => void) => {
+    if (msg?.type === 'PROFILES_UPDATED') {
+      getState().then(newState => {
+        localState.profiles = newState.profiles;
+        refreshList(localState.profiles);
+      }).catch(() => {});
+    }
+    return undefined;
+  });
 }
 
 main();

@@ -18,7 +18,20 @@ const DEFAULT_PROFILE: Profile = {
   createdAt: Date.now(),
   updatedAt: Date.now(),
 };
-
+ 
+// Helper: broadcast profile updates to any open extension views.
+// Suppress errors when there is no receiver.
+function broadcastUpdate() {
+  try {
+    // Some chrome typings return a Promise; if so we safely ignore rejections.
+    // If not, this call is still safe inside try/catch.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (chrome.runtime.sendMessage as any)({ type: 'PROFILES_UPDATED' }).catch?.(() => {});
+  } catch {
+    // ignore
+  }
+}
+ 
 // Assemble state: settings/lastUsedProfileId are stored in chrome.storage.sync,
 // profiles are stored in chrome.storage.local to avoid sync per-item quota.
 export async function getState(): Promise<StorageSchema> {
@@ -78,6 +91,7 @@ export async function upsertProfile(
 
   // Persist profile to local storage (larger quota)
   await chrome.storage.local.set({ [key]: profileToSave });
+  broadcastUpdate();
   return profileToSave;
 }
 
@@ -90,6 +104,7 @@ export async function deleteProfile(id: string) {
   if (state.lastUsedProfileId === id) {
     await setLastUsedProfile(state.profiles[0]?.id);
   }
+  broadcastUpdate();
 }
 
 export async function setLastUsedProfile(id: string | undefined) {
@@ -136,7 +151,8 @@ export async function importJson(text: string) {
   // Persist profiles locally and settings (and lastUsedProfileId) in sync
   await chrome.storage.local.set(toSetLocal);
   await chrome.storage.sync.set({ settings, lastUsedProfileId: profiles[0]?.id });
+  broadcastUpdate();
 }
-
+ 
 // Note: profiles are stored in chrome.storage.local now to avoid chrome.storage.sync per-item quota limits.
 // Settings and lastUsedProfileId remain in chrome.storage.sync so user preferences can still sync if desired.

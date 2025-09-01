@@ -1,5 +1,6 @@
 import type { Profile } from '../shared/types';
 import { getState, setLastUsedProfile } from '../shared/storage';
+import { pRemoveAllContextMenus, pCreateContextMenu } from '../shared/chrome-utils';
 
 // Ensure context menu rebuilds don't overlap (which can cause duplicate-id errors)
 let rebuildInFlight: Promise<void> | null = null;
@@ -10,22 +11,22 @@ async function rebuildContextMenus() {
   rebuildInFlight = (async () => {
     try {
       const state = await getState();
-      await new Promise<void>((resolve) => { chrome.contextMenus.removeAll(() => resolve()); });
+      await pRemoveAllContextMenus();
       if (!state.settings.showContextMenu) return;
 
-      chrome.contextMenus.create({
+      await pCreateContextMenu({
         id: 'open_profiles',
-        title: 'Open Profiles…',
+        title: 'Open System Prompts…',
         contexts: ['all'],
         documentUrlPatterns: ['https://aistudio.google.com/*']
-      }, () => { void (chrome.runtime as any).lastError; });
+      });
 
-      chrome.contextMenus.create({
+      await pCreateContextMenu({
         id: 'insert_last_profile',
         title: 'Insert last profile',
         contexts: ['all'],
         documentUrlPatterns: ['https://aistudio.google.com/*']
-      }, () => { void (chrome.runtime as any).lastError; });
+      });
     } catch (e) {
       console.warn('contextMenus setup error', e);
     } finally {

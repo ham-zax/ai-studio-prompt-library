@@ -17,6 +17,7 @@ export interface Settings {
   showContextMenu: boolean; // default: true
   theme: Theme; // default: 'auto'
   confirmOverwriteSystem: boolean; // default: true
+  customSelector?: string; // default: undefined
 }
 
 export interface StorageSchema {

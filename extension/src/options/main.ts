@@ -178,7 +178,7 @@ async function main() {
         await upsertProfile({ id, name, content });
         dlg.close();
         clearForm();
-        // refresh will be triggered by PROFILES_UPDATED broadcast
+        await refresh();
       });
     }
     if (dlgCancel) {

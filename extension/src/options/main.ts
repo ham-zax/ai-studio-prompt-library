@@ -1,6 +1,6 @@
 import { getState, setSettings, upsertProfile, deleteProfile, exportJson, importJson } from '../shared/storage';
 import type { Profile, Settings } from '../shared/types';
-import { applyTheme } from '../shared/ui-utils';
+import { applyTheme, renderProfileList } from '../shared/ui-utils';
 
 function el<T extends HTMLElement>(id: string) { return document.getElementById(id) as T; }
 
@@ -13,23 +13,18 @@ function clearForm() {
   if (cf) cf.style.display = 'none';
 }
 
+async function refresh() {
+  const state = await getState();
+  // settings
+  el<HTMLSelectElement>('insertMode').value = state.settings.insertMode;
+  el<HTMLInputElement>('showContextMenu').checked = !!state.settings.showContextMenu;
+  el<HTMLInputElement>('confirmOverwriteSystem').checked = state.settings.confirmOverwriteSystem ?? true;
+  el<HTMLSelectElement>('theme').value = state.settings.theme ?? 'auto';
+  el<HTMLInputElement>('customSelector').value = state.settings.customSelector ?? '';
+  applyTheme(state.settings.theme ?? 'auto');
 
-function renderRows(profiles: Profile[]) {
-  const ul = el<HTMLUListElement>('rows');
-  ul.innerHTML = '';
-  for (const p of profiles) {
-    const li = document.createElement('li');
-
-    const info = document.createElement('div');
-    info.className = 'info';
-    const name = document.createElement('div');
-    name.className = 'name';
-    name.textContent = p.name;
-    const content = document.createElement('div');
-    content.className = 'content';
-    content.textContent = p.content.length > 200 ? p.content.slice(0, 200) + '…' : p.content;
-    info.append(name, content);
-
+  const ul = el<HTMLUListElement>('profile-list');
+  renderProfileList(ul, state.profiles, (p) => {
     const actions = document.createElement('div');
     actions.className = 'actions';
 
@@ -59,33 +54,17 @@ function renderRows(profiles: Profile[]) {
     });
 
     actions.append(edit, del);
-    li.append(info, actions);
-
-    li.addEventListener('click', () => {
-      el<HTMLInputElement>('editingId').value = p.id;
-      el<HTMLInputElement>('name').value = p.name;
-      el<HTMLTextAreaElement>('content').value = p.content;
-      el<HTMLButtonElement>('add').textContent = 'Save Changes';
-      const cf = el<HTMLButtonElement>('clearForm');
-      if (cf) cf.style.display = 'inline-block';
-      const dlg = el<HTMLDialogElement>('editDialog');
-      if (dlg) dlg.showModal();
-    });
-
-    ul.appendChild(li);
-  }
-}
-
-async function refresh() {
-  const state = await getState();
-  // settings
-  el<HTMLSelectElement>('insertMode').value = state.settings.insertMode;
-  el<HTMLInputElement>('showContextMenu').checked = !!state.settings.showContextMenu;
-  el<HTMLInputElement>('confirmOverwriteSystem').checked = state.settings.confirmOverwriteSystem ?? true;
-  el<HTMLSelectElement>('theme').value = state.settings.theme ?? 'auto';
-  el<HTMLInputElement>('customSelector').value = state.settings.customSelector ?? '';
-  applyTheme(state.settings.theme ?? 'auto');
-  renderRows(state.profiles);
+    return actions;
+  }, (p) => {
+    el<HTMLInputElement>('editingId').value = p.id;
+    el<HTMLInputElement>('name').value = p.name;
+    el<HTMLTextAreaElement>('content').value = p.content;
+    el<HTMLButtonElement>('add').textContent = 'Save Changes';
+    const cf = el<HTMLButtonElement>('clearForm');
+    if (cf) cf.style.display = 'inline-block';
+    const dlg = el<HTMLDialogElement>('editDialog');
+    if (dlg) dlg.showModal();
+  });
 }
 
 async function main() {
@@ -102,7 +81,7 @@ async function main() {
     el<HTMLInputElement>('editingId').value = '';
     el<HTMLInputElement>('name').value = '';
     el<HTMLTextAreaElement>('content').value = '';
-  el<HTMLButtonElement>('add').textContent = 'Add Profile';
+    el<HTMLButtonElement>('add').textContent = 'Add Profile';
     const cf = el<HTMLButtonElement>('clearForm');
     if (cf) cf.style.display = 'none';
     const dlg = el<HTMLDialogElement>('editDialog');

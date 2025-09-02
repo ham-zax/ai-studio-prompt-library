@@ -139,7 +139,7 @@ async function handleInsertAsync(text: string, mode: InsertMode = 'replace') {
     }
   }
   if (!target) {
-    showErrorToast('[AI Studio Profiles] Could not find the system instructions field.');
+    showErrorToast('[AI Studio Prompts] Could not find the system instructions field.');
     return;
   }
   // Confirm overwrite if replacing and content already exists
@@ -162,8 +162,8 @@ async function handleInsertAsync(text: string, mode: InsertMode = 'replace') {
 
 chrome.runtime.onMessage.addListener((msg: RuntimeMessage, _sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
   (async () => {
-    if (msg.type === 'INSERT_PROFILE') {
-      await handleInsertAsync(msg.profile.content, msg.mode);
+    if (msg.type === 'INSERT_PROMPT') {
+      await handleInsertAsync(msg.prompt.content, msg.mode);
       sendResponse({ ok: true });
     }
   })();

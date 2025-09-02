@@ -43,8 +43,8 @@
         transform: translateY(1px);
       }
 
-      /* Profiles column */
-      .profiles-column .card { display: flex; flex-direction: column; gap: 12px; }
+      /* Prompts column */
+      .prompts-column .card { display: flex; flex-direction: column; gap: 12px; }
       .card-header {
         display: flex;
         justify-content: space-between;
@@ -53,14 +53,14 @@
       }
       .header-actions { display:flex; gap:8px; align-items:center; }
 
-      .profile-form {
+      .prompt-form {
         display: grid;
         grid-template-columns: 1fr auto;
         gap: 8px;
         align-items: start;
       }
-      .profile-form input#name { width: 100%; }
-      .profile-form textarea#content {
+      .prompt-form input#name { width: 100%; }
+      .prompt-form textarea#content {
         grid-column: 1 / -1;
         min-height: 120px;
         resize: vertical;
@@ -72,7 +72,7 @@
         align-items:center;
       }
 
-      .profile-list {
+      .prompt-list {
         list-style: none;
         margin: 0;
         padding: 0;
@@ -108,7 +108,7 @@
       /* Remove default dialog padding when open so the form sizing is consistent */
       dialog[open] { padding: 0; }
 
-      .profile-list li {
+      .prompt-list li {
         display:flex;
         justify-content: space-between;
         gap: 12px;
@@ -118,15 +118,15 @@
         background: var(--card-bg);
         box-shadow: var(--card-shadow);
       }
-      .profile-list .info {
+      .prompt-list .info {
         flex: 1 1 auto;
         min-width: 0;
       }
-      .profile-list .name {
+      .prompt-list .name {
         font-weight: 600;
         margin-bottom: 4px;
       }
-      .profile-list .content {
+      .prompt-list .content {
         color: var(--muted);
         font-size: 12px;
         overflow: hidden;
@@ -134,12 +134,12 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
       }
-      .profile-list .actions {
+      .prompt-list .actions {
         display:flex;
         gap:8px;
         align-items:center;
       }
-      .profile-list button { white-space: nowrap; }
+      .prompt-list button { white-space: nowrap; }
 
       /* File input hidden but accessible */
       input[type="file"] { display: none; }
@@ -189,7 +189,7 @@
             <div>
               <h3 style="margin:0 0 8px 0;">Advanced</h3>
               <div class="setting-row">
-                <label for="customSelector">Custom Selector (Optional)</label>
+                <label for="customSelector">Custom Selector <br> (Optional)</label>
                 <input type="text" id="customSelector" placeholder="e.g., textarea[data-test-id='system-prompt']" />
               </div>
               <p class="muted">Override the default method for finding the system instructions field. Use a valid CSS selector. Only change this if the extension stops working correctly.</p>
@@ -197,7 +197,7 @@
           </section>
         </div>
 
-        <div class="profiles-column">
+        <div class="prompts-column">
           <section class="card">
             <div class="card-header">
               <h2>System Prompts</h2>
@@ -236,7 +236,7 @@
               </form>
             </dialog>
 
-            <ul class="profile-list" id="profile-list" aria-live="polite"></ul>
+            <ul class="prompt-list" id="prompt-list" aria-live="polite"></ul>
 
             <p class="muted">Tip: Keyboard shortcuts can be changed in chrome://extensions/shortcuts</p>
           </section>

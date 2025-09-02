@@ -2,7 +2,7 @@ export type InsertMode = 'replace' | 'append' | 'prepend';
 
 export type Theme = 'auto' | 'light' | 'dark';
 
-export interface Profile {
+export interface Prompt {
   id: string;
   name: string;
   content: string;
@@ -21,8 +21,8 @@ export interface Settings {
 }
 
 export interface StorageSchema {
-  profiles: Profile[];
-  lastUsedProfileId?: string;
+  prompts: Prompt[];
+  lastUsedPromptId?: string;
   settings: Settings;
   version: number; // for migrations
 }

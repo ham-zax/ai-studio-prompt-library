@@ -1,18 +1,18 @@
-import { getState, setLastUsedProfile } from '../shared/storage';
-import type { Profile } from '../shared/types';
-import { applyTheme, renderProfileList } from '../shared/ui-utils';
+import { getState, setLastUsedPrompt } from '../shared/storage';
+import type { Prompt } from '../shared/types';
+import { applyTheme, renderPromptList } from '../shared/ui-utils';
 
 async function getActiveTabId(): Promise<number | undefined> {
   const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
   return tab?.id;
 }
 
-async function sendInsert(profile: Profile) {
+async function sendInsert(prompt: Prompt) {
   const state = await getState();
   const tabId = await getActiveTabId();
   if (!tabId) return;
-  await chrome.tabs.sendMessage(tabId, { type: 'INSERT_PROFILE', profile, mode: state.settings.insertMode });
-  await setLastUsedProfile(profile.id);
+  await chrome.tabs.sendMessage(tabId, { type: 'INSERT_PROMPT', prompt, mode: state.settings.insertMode });
+  await setLastUsedPrompt(prompt.id);
   window.close();
 }
 
@@ -22,14 +22,14 @@ async function main() {
   const input = document.getElementById('search') as HTMLInputElement;
   const openOptions = document.getElementById('openOptions') as HTMLAnchorElement;
 
-  // Local mutable copy of profiles so we can refresh the list without re-querying DOM callers.
-  const localState = { ...state, profiles: state.profiles.slice() };
-
-  const refreshList = (profiles: Profile[]) => {
-    const ul = document.getElementById('profile-list')!;
+  // Local mutable copy of prompts so we can refresh the list without re-querying DOM callers.
+  const localState = { ...state, prompts: state.prompts.slice() };
+  
+  const refreshList = (prompts: Prompt[]) => {
+    const ul = document.getElementById('prompt-list')!;
     const lowerQuery = input.value.toLowerCase();
-    const filtered = profiles.filter(p => p.name.toLowerCase().includes(lowerQuery) || p.content.toLowerCase().includes(lowerQuery));
-    renderProfileList(ul, filtered, (p) => {
+    const filtered = prompts.filter(p => p.name.toLowerCase().includes(lowerQuery) || p.content.toLowerCase().includes(lowerQuery));
+    renderPromptList(ul, filtered, (p) => {
       const actions = document.createElement('div');
       actions.className = 'actions';
       const btn = document.createElement('button');
@@ -43,16 +43,16 @@ async function main() {
     });
   };
 
-  input.addEventListener('input', () => refreshList(localState.profiles));
+  input.addEventListener('input', () => refreshList(localState.prompts));
   openOptions.addEventListener('click', (e) => { e.preventDefault(); chrome.runtime.openOptionsPage(); });
-  refreshList(localState.profiles);
+  refreshList(localState.prompts);
 
-  // Listen for broadcasts and refresh the list when profiles change elsewhere.
+  // Listen for broadcasts and refresh the list when prompts change elsewhere.
   chrome.runtime.onMessage.addListener((msg: any, _sender: chrome.runtime.MessageSender, _sendResponse?: (response?: any) => void) => {
-    if (msg?.type === 'PROFILES_UPDATED') {
+    if (msg?.type === 'PROMPTS_UPDATED') {
       getState().then(newState => {
-        localState.profiles = newState.profiles;
-        refreshList(localState.profiles);
+        localState.prompts = newState.prompts;
+        refreshList(localState.prompts);
       }).catch(() => {});
     }
     return undefined;

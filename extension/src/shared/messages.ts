@@ -1,13 +1,13 @@
-import type { Profile, InsertMode } from './types';
+import type { Prompt, InsertMode } from './types';
 
-export type MsgInsertProfile = {
-  type: 'INSERT_PROFILE';
-  profile: Profile;
+export type MsgInsertPrompt = {
+  type: 'INSERT_PROMPT';
+  prompt: Prompt;
   mode?: InsertMode;
 };
 
-export type MsgProfilesUpdated = {
-  type: 'PROFILES_UPDATED';
+export type MsgPromptsUpdated = {
+  type: 'PROMPTS_UPDATED';
 };
 
-export type RuntimeMessage = MsgInsertProfile | MsgProfilesUpdated;
+export type RuntimeMessage = MsgInsertPrompt | MsgPromptsUpdated;

@@ -1,6 +1,6 @@
-import { getState, setSettings, upsertProfile, deleteProfile, exportJson, importJson } from '../shared/storage';
-import type { Profile, Settings } from '../shared/types';
-import { applyTheme, renderProfileList } from '../shared/ui-utils';
+import { getState, setSettings, upsertPrompt, deletePrompt, exportJson, importJson } from '../shared/storage';
+import type { Prompt, Settings } from '../shared/types';
+import { applyTheme, renderPromptList } from '../shared/ui-utils';
 
 function el<T extends HTMLElement>(id: string) { return document.getElementById(id) as T; }
 
@@ -8,7 +8,7 @@ function clearForm() {
   el<HTMLInputElement>('name').value = '';
   el<HTMLTextAreaElement>('content').value = '';
   el<HTMLInputElement>('editingId').value = '';
-  el<HTMLButtonElement>('add').textContent = 'Add Profile';
+  el<HTMLButtonElement>('add').textContent = 'Add Prompt';
   const cf = el<HTMLButtonElement>('clearForm');
   if (cf) cf.style.display = 'none';
 }
@@ -23,8 +23,8 @@ async function refresh() {
   el<HTMLInputElement>('customSelector').value = state.settings.customSelector ?? '';
   applyTheme(state.settings.theme ?? 'auto');
 
-  const ul = el<HTMLUListElement>('profile-list');
-  renderProfileList(ul, state.profiles, (p) => {
+  const ul = el<HTMLUListElement>('prompt-list');
+  renderPromptList(ul, state.prompts, (p) => {
     const actions = document.createElement('div');
     actions.className = 'actions';
 
@@ -47,8 +47,8 @@ async function refresh() {
     del.textContent = 'Delete';
     del.addEventListener('click', async (e) => {
       e.stopPropagation();
-      if (confirm('Delete this profile?')) {
-        await deleteProfile(p.id);
+      if (confirm('Delete this prompt?')) {
+        await deletePrompt(p.id);
         await refresh();
       }
     });
@@ -77,11 +77,11 @@ async function main() {
 
   el<HTMLButtonElement>('add').addEventListener('click', (e) => {
     e.preventDefault();
-    // Open dialog for creating a new profile
+    // Open dialog for creating a new prompt
     el<HTMLInputElement>('editingId').value = '';
     el<HTMLInputElement>('name').value = '';
     el<HTMLTextAreaElement>('content').value = '';
-    el<HTMLButtonElement>('add').textContent = 'Add Profile';
+    el<HTMLButtonElement>('add').textContent = 'Add Prompt';
     const cf = el<HTMLButtonElement>('clearForm');
     if (cf) cf.style.display = 'none';
     const dlg = el<HTMLDialogElement>('editDialog');
@@ -135,7 +135,7 @@ async function main() {
       try {
         await importJson(text);
         alert('Imported successfully');
-        // PROFILES_UPDATED broadcast will trigger refresh
+        // PROMPTS_UPDATED broadcast will trigger refresh
       } catch (e) {
         alert('Import failed: ' + (e as Error).message);
       }
@@ -154,7 +154,7 @@ async function main() {
         const content = el<HTMLTextAreaElement>('content').value.trim();
         if (!name || !content) return alert('Name and content are required.');
         const id = el<HTMLInputElement>('editingId').value || undefined;
-        await upsertProfile({ id, name, content });
+        await upsertPrompt({ id, name, content });
         dlg.close();
         clearForm();
         await refresh();
@@ -168,9 +168,9 @@ async function main() {
     }
   }
 
-  // Listen for profile update broadcasts from storage.ts and refresh UI
+  // Listen for prompt update broadcasts from storage.ts and refresh UI
   chrome.runtime.onMessage.addListener((msg: any, _sender: chrome.runtime.MessageSender, _sendResponse?: (response?: any) => void) => {
-    if (msg?.type === 'PROFILES_UPDATED') {
+    if (msg?.type === 'PROMPTS_UPDATED') {
       refresh();
     }
     return undefined;

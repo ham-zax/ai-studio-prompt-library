@@ -1,4 +1,4 @@
-import type { Profile, Settings } from './types';
+import type { Prompt, Settings } from './types';
 
 export function applyTheme(theme: Settings['theme']) {
   const root = document.documentElement;
@@ -9,9 +9,9 @@ export function applyTheme(theme: Settings['theme']) {
   }
 }
 
-export function renderProfileList(container: HTMLElement, profiles: Profile[], renderActions: (profile: Profile) => HTMLElement, onItemClick: (profile: Profile) => void) {
+export function renderPromptList(container: HTMLElement, prompts: Prompt[], renderActions: (prompt: Prompt) => HTMLElement, onItemClick: (prompt: Prompt) => void) {
   container.innerHTML = '';
-  for (const p of profiles) {
+  for (const p of prompts) {
     const li = document.createElement('li');
     li.setAttribute('data-id', p.id);
 

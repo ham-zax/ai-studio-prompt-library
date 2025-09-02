@@ -1,5 +1,5 @@
-import type { Profile } from '../shared/types';
-import { getState, setLastUsedProfile } from '../shared/storage';
+import type { Prompt } from '../shared/types';
+import { getState, setLastUsedPrompt } from '../shared/storage';
 import { pRemoveAllContextMenus, pCreateContextMenu } from '../shared/chrome-utils';
 
 // Ensure context menu rebuilds don't overlap (which can cause duplicate-id errors)
@@ -15,15 +15,15 @@ async function rebuildContextMenus() {
       if (!state.settings.showContextMenu) return;
 
       await pCreateContextMenu({
-        id: 'open_profiles',
+        id: 'open_prompts',
         title: 'Open System Prompts…',
         contexts: ['all'],
         documentUrlPatterns: ['https://aistudio.google.com/*']
       });
 
       await pCreateContextMenu({
-        id: 'insert_last_profile',
-        title: 'Insert last profile',
+        id: 'insert_last_prompt',
+        title: 'Insert last prompt',
         contexts: ['all'],
         documentUrlPatterns: ['https://aistudio.google.com/*']
       });
@@ -48,15 +48,15 @@ chrome.storage.onChanged.addListener((changes: { [key: string]: chrome.storage.S
 
 chrome.contextMenus.onClicked.addListener(async (info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab) => {
   if (!tab?.id) return;
-  if (info.menuItemId === 'open_profiles') {
+  if (info.menuItemId === 'open_prompts') {
     try {
       await chrome.action.openPopup();
     } catch {
       // fallback: open options
       chrome.runtime.openOptionsPage();
     }
-  } else if (info.menuItemId === 'insert_last_profile') {
-    await insertLastProfileIntoTab(tab.id);
+  } else if (info.menuItemId === 'insert_last_prompt') {
+    await insertLastPromptIntoTab(tab.id);
   }
 });
 
@@ -69,24 +69,24 @@ chrome.commands.onCommand.addListener(async (command: string) => {
     } catch (e) {
       console.warn('openPopup failed', e);
     }
-  } else if (command === 'insert_last_profile') {
-    await insertLastProfileIntoTab(tab.id);
+  } else if (command === 'insert_last_prompt') {
+    await insertLastPromptIntoTab(tab.id);
   }
 });
 
-async function insertLastProfileIntoTab(tabId: number) {
+async function insertLastPromptIntoTab(tabId: number) {
   const state = await getState();
-  const prof = state.profiles.find(p => p.id === state.lastUsedProfileId) || state.profiles[0];
-  if (!prof) return;
-  await sendInsertMessage(tabId, prof, state.settings.insertMode);
+  const prompt = state.prompts.find(p => p.id === state.lastUsedPromptId) || state.prompts[0];
+  if (!prompt) return;
+  await sendInsertMessage(tabId, prompt, state.settings.insertMode);
 }
 
-async function sendInsertMessage(tabId: number, profile: Profile, mode?: 'replace'|'append'|'prepend') {
+async function sendInsertMessage(tabId: number, prompt: Prompt, mode?: 'replace'|'append'|'prepend') {
   try {
-    await chrome.tabs.sendMessage(tabId, { type: 'INSERT_PROFILE', profile, mode });
-    await setLastUsedProfile(profile.id);
+    await chrome.tabs.sendMessage(tabId, { type: 'INSERT_PROMPT', prompt: prompt, mode });
+    await setLastUsedPrompt(prompt.id);
   } catch (e) {
     // If this fails, the content script may not be available on the page.
-    console.error('Failed to insert profile (content script unavailable?)', e);
+    console.error('Failed to insert prompt (content script unavailable?)', e);
   }
 }

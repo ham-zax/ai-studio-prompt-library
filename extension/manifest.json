@@ -42,7 +42,7 @@
       "suggested_key": { "default": "Alt+Shift+1", "mac": "Alt+Shift+1" },
       "description": "Open system prompts popup"
     },
-    "insert_last_profile": {
+    "insert_last_prompt": {
       "suggested_key": { "default": "Alt+Shift+2", "mac": "Alt+Shift+2" },
       "description": "Insert last used prompt"
     }

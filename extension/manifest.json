@@ -3,7 +3,7 @@
   "name": "AI Studio Prompt Library",
   "short_name": "System Prompts",
   "description": "Save and quickly insert system prompts (system messages) on Google AI Studio.",
-  "version": "0.1.6",
+  "version": "0.2",
   "homepage_url": "https://github.com/ham-zax/ai-studio-prompt-library",
   "icons": {
     "16": "extension/icons/icon-16.png",

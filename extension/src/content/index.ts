@@ -147,6 +147,14 @@ async function handleInsertAsync(text: string, mode: InsertMode = 'replace') {
     const current = isTextarea(target) ? (target as HTMLTextAreaElement).value : (target as HTMLElement).innerText || '';
     if (current.trim().length > 0) {
       if (state.settings.confirmOverwriteSystem) {
+        try {
+          // Tell any open popup to close itself before we show a modal that it might obscure.
+          // This will be awaited, ensuring the popup is gone before the modal appears.
+          await chrome.runtime.sendMessage({ type: 'SHOW_CONFIRMATION_MODAL' });
+        } catch (e) {
+          // This is expected to fail if the action was triggered by a context menu or hotkey
+          // (i.e., when the popup is not open). We can safely ignore the error.
+        }
         const theme = state.settings.theme ?? 'auto';
         const darkPreferred = theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches);
         const res = await confirmOverwriteModal(darkPreferred);

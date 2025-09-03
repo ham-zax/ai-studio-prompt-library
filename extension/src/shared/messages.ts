@@ -9,5 +9,9 @@ export type MsgInsertPrompt = {
 export type MsgPromptsUpdated = {
   type: 'PROMPTS_UPDATED';
 };
-
-export type RuntimeMessage = MsgInsertPrompt | MsgPromptsUpdated;
+ 
+export type MsgShowConfirmationModal = {
+  type: 'SHOW_CONFIRMATION_MODAL';
+};
+ 
+export type RuntimeMessage = MsgInsertPrompt | MsgPromptsUpdated | MsgShowConfirmationModal;

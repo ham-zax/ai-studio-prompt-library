@@ -4,9 +4,9 @@
   --muted: #667085;
   --border: #e5e7eb;
   --card: #fff;
-  --primary: #2563eb;
+  --primary: #2b6f86; /* subtler accent */
   --primary-ink: #fff;
-  --ring: #3b82f6;
+  --ring: #5aa0b0; /* softer focus ring */
   --radius: 10px;
 }
 /* Auto dark based on system */
@@ -17,9 +17,9 @@
     --muted: #9aa4b2;
     --border: #2a2f3a;
     --card: #111317;
-    --primary: #3b82f6;
+    --primary: #2b6f86; /* subtler accent in dark */
     --primary-ink: #fff;
-    --ring: #60a5fa;
+    --ring: #5aa0b0; /* softer focus ring in dark */
   }
 }
 /* Manual override */
@@ -71,10 +71,30 @@ textarea { height: 160px; resize: vertical; }
 .row { display: flex; gap: 8px; margin: 8px 0; }
 .right { justify-content: flex-end; }
 
-button { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--fg); cursor: pointer; }
-button:not(.btn-primary):hover { background: color-mix(in srgb, var(--card) 90%, var(--bg) 10%); }
-.btn-primary { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
-.btn-primary:hover { background: color-mix(in srgb, var(--primary) 92%, #000 8%); color: var(--primary-ink); }
+button { padding: 8px 12px; border-radius: 8px; border: 1px solid transparent; background: transparent; color: var(--fg); cursor: pointer; font: inherit; }
+button:not(.btn-primary):hover { background: color-mix(in srgb, var(--card) 92%, var(--bg) 8%); }
+/* shadcn-style primary button */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 18%, var(--card) 82%), color-mix(in srgb, var(--primary) 12%, var(--card) 88%));
+  color: var(--primary-ink);
+  border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
+  box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+  font-weight: 600;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+}
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ring) 20%, transparent);
+}
 
 table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; color: var(--fg); }
 thead th { background: color-mix(in srgb, var(--bg) 85%, var(--card) 15%); color: var(--fg); font-weight: 600; }
@@ -113,8 +133,19 @@ button { padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border);
 button:not(.btn-primary):hover { background: color-mix(in srgb, var(--card) 90%, var(--bg) 10%); }
 .btn-primary { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
 .btn-primary:hover { background: color-mix(in srgb, var(--primary) 92%, #000 8%); color: var(--primary-ink); }
-li .actions button { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
-li .actions button:hover { background: color-mix(in srgb, var(--primary) 92%, #000 8%); }
+li .actions button {
+  /* De-emphasize heavy filled buttons; use subtle tint on hover */
+  background: transparent;
+  color: var(--primary);
+  border-color: transparent;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+li .actions button:hover {
+  background: color-mix(in srgb, var(--primary) 14%, var(--card) 86%);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
 .footer { margin-top: 8px; display:flex; justify-content: space-between; align-items:center; }
 
 mark {
@@ -125,25 +156,48 @@ mark {
 }
 
 .copy-btn {
-  padding: 6px 8px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: color-mix(in srgb, var(--card) 98%, transparent);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary);
-  transition: color .15s ease, background .15s ease, transform .12s ease;
+width: 36px;
+height: 36px;
+padding: 6px;
+border-radius: 50%;
+border: 1px solid var(--border);
+background: color-mix(in srgb, var(--card) 98%, transparent);
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+color: var(--muted); /* less glare by default */
+transition: color .15s ease, background .15s ease, transform .12s ease;
 }
 
 li .actions .copy-btn {
-  background: transparent;
-  color: var(--primary);
-  border-color: transparent;
-  padding: 6px 8px;
+background: transparent;
+color: var(--muted);
+border-color: transparent;
+padding: 6px;
 }
 
+/* Popup-specific: make the insert control look like a proper button */
+.container.card #prompt-list .actions .btn-primary.insert-btn {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 8px 12px;
+border-radius: 8px;
+background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 22%, var(--card) 78%), color-mix(in srgb, var(--primary) 16%, var(--card) 84%));
+color: var(--primary-ink);
+border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
+font-weight: 600;
+box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+}
+.container.card #prompt-list .actions .btn-primary.insert-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+}
+
+/* Ensure SVG icons inherit color */
+.icon-btn svg, .copy-btn svg, .icon-btn path, .copy-btn path { fill: currentColor; }
+ 
 li .actions .copy-btn svg {
   width: 16px;
   height: 16px;
@@ -151,11 +205,14 @@ li .actions .copy-btn svg {
   fill: currentColor;
   transition: color .15s ease, fill .15s ease, transform .12s ease;
 }
-
+ 
 li .actions .copy-btn:hover {
   text-decoration: none;
-  color: var(--primary-ink);
-  background: color-mix(in srgb, var(--primary) 92%, #000 8%);
-  border-color: var(--primary);
+  color: var(--primary);
+  background: color-mix(in srgb, var(--primary) 18%, var(--card) 82%);
+  border-color: transparent;
   transform: translateY(-1px);
 }
+
+/* Popup and options actions handled independently; keep actions visible by default for popup.
+   (Options list uses its own hover-reveal via .prompt-list .actions) */

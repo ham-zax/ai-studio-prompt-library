@@ -51,15 +51,15 @@ async function main() {
       actions.className = 'actions';
 
       const btn = document.createElement('button');
-      btn.className = 'btn-primary';
+      btn.className = 'btn-primary insert-btn';
       btn.textContent = 'Insert';
       btn.addEventListener('click', (e) => { e.stopPropagation(); sendInsert(p, btn); });
       actions.appendChild(btn);
-
+ 
       const copyBtn = document.createElement('button');
-      copyBtn.className = 'copy-btn';
-      // Inline SVG icon provided by user (Material Symbols - small square)
-      copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M9 18q-.825 0-1.412-.587T7 16V4q0-.825.588-1.412T9 2h9q.825 0 1.413.588T20 4v12q0 .825-.587 1.413T18 18zm0-2h9V4H9zm-4 6q-.825 0-1.412-.587T3 20V7q0-.425.288-.712T4 6t.713.288T5 7v13h10q.425 0 .713.288T16 21t-.288.713T15 22zm4-6V4z"/></svg>';
+      copyBtn.className = 'copy-btn icon-btn';
+      // Inline SVG icon (uses currentColor so CSS can tint it)
+      copyBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
       copyBtn.setAttribute('aria-label', 'Copy prompt content');
       copyBtn.addEventListener('click', (e) => {
         e.stopPropagation();

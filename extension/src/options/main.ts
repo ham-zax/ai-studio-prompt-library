@@ -29,9 +29,13 @@ async function refresh() {
   renderPromptList(ul, state.prompts, (p) => {
     const actions = document.createElement('div');
     actions.className = 'actions';
-
+ 
+    // Edit (pencil) icon button
     const edit = document.createElement('button');
-    edit.textContent = 'Edit';
+    edit.className = 'icon-btn edit-btn';
+    edit.setAttribute('aria-label', 'Edit prompt');
+    edit.title = 'Edit';
+    edit.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>';
     edit.addEventListener('click', (e) => {
       e.stopPropagation();
       el<HTMLInputElement>('editingId').value = p.id;
@@ -44,9 +48,13 @@ async function refresh() {
       const dlg = el<HTMLDialogElement>('editDialog');
       if (dlg) dlg.showModal();
     });
-
+ 
+    // Delete (trash) icon button — visually de-emphasized
     const del = document.createElement('button');
-    del.textContent = 'Delete';
+    del.className = 'icon-btn delete-btn';
+    del.setAttribute('aria-label', 'Delete prompt');
+    del.title = 'Delete';
+    del.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>';
     del.addEventListener('click', async (e) => {
       e.stopPropagation();
       // Respect user's setting for delete confirmations. Fetch latest settings to be safe.
@@ -57,7 +65,7 @@ async function refresh() {
         await refresh();
       }
     });
-
+ 
     actions.append(edit, del);
     return actions;
   }, (p) => {

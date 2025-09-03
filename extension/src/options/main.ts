@@ -19,6 +19,7 @@ async function refresh() {
   el<HTMLSelectElement>('insertMode').value = state.settings.insertMode;
   el<HTMLInputElement>('showContextMenu').checked = !!state.settings.showContextMenu;
   el<HTMLInputElement>('confirmOverwriteSystem').checked = state.settings.confirmOverwriteSystem ?? true;
+  el<HTMLInputElement>('confirmDeletePrompt').checked = state.settings.confirmDeletePrompt ?? true;
   el<HTMLSelectElement>('theme').value = state.settings.theme ?? 'auto';
   el<HTMLInputElement>('customSelector').value = state.settings.customSelector ?? '';
   applyTheme(state.settings.theme ?? 'auto');
@@ -47,7 +48,10 @@ async function refresh() {
     del.textContent = 'Delete';
     del.addEventListener('click', async (e) => {
       e.stopPropagation();
-      if (confirm('Delete this prompt?')) {
+      // Respect user's setting for delete confirmations. Fetch latest settings to be safe.
+      const s = await getState();
+      const shouldConfirm = s.settings.confirmDeletePrompt ?? true;
+      if (!shouldConfirm || confirm('Delete this prompt?')) {
         await deletePrompt(p.id);
         await refresh();
       }
@@ -101,6 +105,12 @@ async function main() {
   el<HTMLInputElement>('confirmOverwriteSystem').addEventListener('change', async (e) => {
     const value = (e.target as HTMLInputElement).checked;
     await setSettings({ confirmOverwriteSystem: value });
+  });
+
+  // New: toggle whether the UI asks for confirmation before deleting prompts.
+  el<HTMLInputElement>('confirmDeletePrompt').addEventListener('change', async (e) => {
+    const value = (e.target as HTMLInputElement).checked;
+    await setSettings({ confirmDeletePrompt: value });
   });
 
   el<HTMLSelectElement>('theme').addEventListener('change', async (e) => {

@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS: Settings = {
   showContextMenu: true,
   theme: 'auto',
   confirmOverwriteSystem: true,
+  confirmDeletePrompt: true,
 };
 
 const DEFAULT_PROMPT: Prompt = {

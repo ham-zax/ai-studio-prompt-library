@@ -17,6 +17,9 @@ export interface Settings {
   showContextMenu: boolean; // default: true
   theme: Theme; // default: 'auto'
   confirmOverwriteSystem: boolean; // default: true
+  // When true, show a confirmation dialog before deleting a prompt.
+  // Users may turn this off to speed up deletions.
+  confirmDeletePrompt?: boolean; // default: true
   customSelector?: string; // default: undefined
 }
 

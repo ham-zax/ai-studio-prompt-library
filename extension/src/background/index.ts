@@ -80,7 +80,11 @@ chrome.commands.onCommand.addListener(async (command: string) => {
 async function insertLastPromptIntoTab(tabId: number) {
   const state = await getState();
   const prompt = state.prompts.find(p => p.id === state.lastUsedPromptId) || state.prompts[0];
-  if (!prompt) return;
+  if (!prompt) {
+    const reason = state.prompts.length === 0 ? 'no prompts in storage' : 'no prompt matches lastUsedPromptId';
+    console.warn('[AI Studio] insertLastPromptIntoTab: aborting —', reason);
+    return;
+  }
   await sendInsertMessage(tabId, prompt, state.settings.insertMode);
 }
 

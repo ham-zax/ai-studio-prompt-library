@@ -135,9 +135,13 @@ async function main() {
       try {
         await importJson(text);
         alert('Imported successfully');
-        // PROMPTS_UPDATED broadcast will trigger refresh
+        // Ensure UI reflects the imported prompts immediately in this page.
+        await refresh();
       } catch (e) {
         alert('Import failed: ' + (e as Error).message);
+      } finally {
+        // Reset file input so the same file can be selected again if needed.
+        input.value = '';
       }
     };
     input.click();

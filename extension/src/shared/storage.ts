@@ -23,14 +23,17 @@ const DEFAULT_PROMPT: Prompt = {
   updatedAt: Date.now(),
 };
  
-// Helper: broadcast prompt updates to any open extension views.
-// Suppress errors when there is no receiver.
-function broadcastUpdate() {
+/**
+ * Helper: broadcast prompt updates to any open extension views.
+ * Accepts an optional detail payload so listeners can patch state instead of full re-fetch.
+ * Suppress errors when there is no receiver.
+ */
+function broadcastUpdate(detail?: Record<string, unknown>) {
   try {
     // Some chrome typings return a Promise; if so we safely ignore rejections.
     // If not, this call is still safe inside try/catch.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (chrome.runtime.sendMessage as any)({ type: 'PROMPTS_UPDATED' }).catch?.(() => {});
+    (chrome.runtime.sendMessage as any)({ type: 'PROMPTS_UPDATED', detail }).catch?.(() => {});
   } catch {
     // ignore
   }
@@ -57,6 +60,8 @@ export async function initializeStorage() {
     version: 1,
   });
   console.log('[AI Studio Prompts] First-time initialization complete.');
+  // Notify listeners that initialization happened and include the default prompt id.
+  broadcastUpdate({ action: 'initialized', id: DEFAULT_PROMPT.id });
 }
 
 /**
@@ -112,7 +117,8 @@ export async function upsertPrompt(
 
   // Persist prompt to local storage (larger quota)
   await chrome.storage.local.set({ [key]: promptToSave });
-  broadcastUpdate();
+  // Inform listeners whether we added or updated a prompt
+  broadcastUpdate({ action: existing ? 'updated' : 'added', id });
   return promptToSave;
 }
 
@@ -128,7 +134,8 @@ export async function deletePrompt(id: string) {
     // Set to the first remaining prompt, or undefined if the list is now empty.
     await setLastUsedPrompt(remainingPrompts[0]?.id);
   }
-  broadcastUpdate();
+  // Inform listeners that a prompt was deleted
+  broadcastUpdate({ action: 'deleted', id });
 }
 
 export async function setLastUsedPrompt(id: string | undefined) {
@@ -192,7 +199,8 @@ export async function importJson(text: string, opts?: { force?: boolean }) {
   // Persist prompts locally and settings (and lastUsedPromptId) in sync
   await chrome.storage.local.set(toSetLocal);
   await chrome.storage.sync.set({ settings, lastUsedPromptId: prompts[0]?.id });
-  broadcastUpdate();
+  // Notify listeners and include import metadata (count)
+  broadcastUpdate({ action: 'imported', count: prompts.length });
 }
  
 // Note: prompts are stored in chrome.storage.local now to avoid chrome.storage.sync per-item quota limits.

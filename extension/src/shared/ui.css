@@ -1,12 +1,12 @@
 :root {
   --bg: #f7f7f8;
   --fg: #111;
-  --muted: #667085;
+  --muted: #525252;
   --border: #e5e7eb;
   --card: #fff;
-  --primary: #2b6f86; /* subtler accent */
+  --primary: #0f7878;
   --primary-ink: #fff;
-  --ring: #5aa0b0; /* softer focus ring */
+  --ring: #149191;
   --radius: 10px;
 }
 /* Auto dark based on system */
@@ -14,34 +14,34 @@
   :root {
     --bg: #0b0b0c;
     --fg: #e5e7eb;
-    --muted: #9aa4b2;
+    --muted: #A1A1A1;
     --border: #2a2f3a;
     --card: #111317;
-    --primary: #2b6f86; /* subtler accent in dark */
+    --primary: #0f7878;
     --primary-ink: #fff;
-    --ring: #5aa0b0; /* softer focus ring in dark */
+    --ring: #149191;
   }
 }
 /* Manual override */
 [data-theme="light"] {
   --bg: #f7f7f8;
   --fg: #111;
-  --muted: #667085;
+  --muted: #525252;
   --border: #e5e7eb;
   --card: #fff;
-  --primary: #2563eb;
+  --primary: #0f7878;
   --primary-ink: #fff;
-  --ring: #3b82f6;
+  --ring: #149191;
 }
 [data-theme="dark"] {
   --bg: #0b0b0c;
   --fg: #e5e7eb;
-  --muted: #9aa4b2;
+  --muted: #A1A1A1;
   --border: #2a2f3a;
   --card: #111317;
-  --primary: #3b82f6;
+  --primary: #0f7878;
   --primary-ink: #fff;
-  --ring: #60a5fa;
+  --ring: #149191;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
@@ -184,20 +184,23 @@ padding: 6px;
 
 /* Popup-specific: make the insert control look like a proper button */
 .container.card #prompt-list .actions .btn-primary.insert-btn {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-padding: 8px 12px;
-border-radius: 8px;
-background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 22%, var(--card) 78%), color-mix(in srgb, var(--primary) 16%, var(--card) 84%));
-color: var(--primary-ink);
-border: 1px solid color-mix(in srgb, var(--primary) 10%, transparent);
-font-weight: 600;
-box-shadow: 0 1px 2px rgba(16,24,40,0.04);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  color: var(--primary);
+  border: 1px solid transparent;
+  font-weight: 600;
+  box-shadow: none;
+  transition: transform .14s ease, box-shadow .14s ease, background .14s ease, filter .14s ease, color .14s ease;
 }
 .container.card #prompt-list .actions .btn-primary.insert-btn:hover {
-transform: translateY(-1px);
-box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(16,24,40,0.10);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 22%, var(--card) 78%), color-mix(in srgb, var(--primary) 16%, var(--card) 84%));
+  color: var(--primary-ink);
 }
 
 /* Ensure SVG icons inherit color */
@@ -211,13 +214,7 @@ li .actions .copy-btn svg {
   transition: color .15s ease, fill .15s ease, transform .12s ease;
 }
  
-li .actions .copy-btn:hover {
-  text-decoration: none;
-  color: var(--primary);
-  background: color-mix(in srgb, var(--primary) 18%, var(--card) 82%);
-  border-color: transparent;
-  transform: translateY(-1px);
-}
+
 
 /* Popup and options actions handled independently; keep actions visible by default for popup.
    (Options list uses its own hover-reveal via .prompt-list .actions) */
@@ -270,7 +267,8 @@ li .actions .copy-btn:hover {
 }
 .container.card #prompt-list .actions .copy-btn:hover {
   transform: translateY(-1px) rotate(-3deg) scale(1.03);
-  color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-ink);
   box-shadow: 0 6px 16px rgba(16,24,40,0.08);
 }
 .container.card #prompt-list .actions .copy-btn:active {
@@ -307,4 +305,16 @@ li .actions .copy-btn:hover {
   box-shadow:
     0 2px 6px rgba(16,24,40,0.08),
     0 0 0 1px color-mix(in srgb, var(--border) 60%, var(--primary) 40%);
+}
+.footer-link {
+  font-size: 12px;
+  color: var(--primary);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+.footer-link:hover {
+  background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+  text-decoration: none;
 }

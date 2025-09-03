@@ -25,6 +25,7 @@
         grid-template-columns: 1fr auto; /* label / control */
         align-items: center;
         row-gap: 16px;
+        padding-bottom: 8px;
       }
       .setting-row { margin: 0; } /* remove old margins in favor of grid spacing */
       /* Ensure label truncates and controls stay compact */
@@ -257,16 +258,16 @@
               </select>
             </div>
 
-            <hr style="border-color:var(--border); margin:16px 0;">
+            <hr style="border-color:var(--border); margin:4px 0;">
 
             <div>
               <h3 style="margin:0 0 8px 0;">Advanced</h3>
               <div class="setting-row">
-                <label for="customSelector">Custom Selector <br> (Optional)</label>
+                <label for="customSelector" style="padding-bottom: 4px;">Custom Selector (Optional)</label>
                 <input type="text" id="customSelector" placeholder="e.g., textarea[data-test-id='system-prompt']" />
               </div>
-              <p class="muted">Override the default method for finding the system instructions field. Use a valid CSS selector. Only change this if the extension stops working correctly.</p>
             </div>
+            <p class="muted">Override the default method for finding the system instructions field. Use a valid CSS selector. Only change this if the extension stops working correctly.</p>
           </section>
         </div>
 

@@ -116,3 +116,46 @@ button:not(.btn-primary):hover { background: color-mix(in srgb, var(--card) 90%,
 li .actions button { background: var(--primary); color: var(--primary-ink); border-color: var(--primary); }
 li .actions button:hover { background: color-mix(in srgb, var(--primary) 92%, #000 8%); }
 .footer { margin-top: 8px; display:flex; justify-content: space-between; align-items:center; }
+
+mark {
+  background: color-mix(in srgb, var(--ring) 18%, transparent);
+  padding: 0 4px;
+  border-radius: 3px;
+  color: var(--primary-ink);
+}
+
+.copy-btn {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--card) 98%, transparent);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  transition: color .15s ease, background .15s ease, transform .12s ease;
+}
+
+li .actions .copy-btn {
+  background: transparent;
+  color: var(--primary);
+  border-color: transparent;
+  padding: 6px 8px;
+}
+
+li .actions .copy-btn svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+  fill: currentColor;
+  transition: color .15s ease, fill .15s ease, transform .12s ease;
+}
+
+li .actions .copy-btn:hover {
+  text-decoration: none;
+  color: var(--primary-ink);
+  background: color-mix(in srgb, var(--primary) 92%, #000 8%);
+  border-color: var(--primary);
+  transform: translateY(-1px);
+}

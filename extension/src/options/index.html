@@ -10,7 +10,7 @@
       .main-grid {
         display: grid;
         grid-template-columns: 320px 1fr;
-        gap: 24px;
+        gap: 32px;
         align-items: start;
       }
       @media (max-width: 800px) {
@@ -19,12 +19,14 @@
 
       /* Settings card tweaks */
       .settings-column .card { margin-bottom: 16px; }
-      .setting-row {
-        display: flex;
+      /* Align settings into two columns for a cleaner keyline */
+      .settings-column .card > div:not(:first-child) {
+        display: grid;
+        grid-template-columns: 1fr auto; /* label / control */
         align-items: center;
-        justify-content: space-between;
-        margin: 10px 0;
+        row-gap: 16px;
       }
+      .setting-row { margin: 0; } /* remove old margins in favor of grid spacing */
       /* Ensure label truncates and controls stay compact */
       .setting-row label { margin: 0; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .checkbox-row { align-items: center; }
@@ -96,7 +98,10 @@
         transition: background .12s ease;
       }
       .prompt-list li:first-child { border-top: 1px solid var(--border); }
-      .prompt-list li:hover { background: color-mix(in srgb, var(--bg) 6%, transparent); }
+      .prompt-list li:hover {
+        background: color-mix(in srgb, var(--bg) 6%, transparent);
+        border-radius: 8px;
+      }
       .prompt-list .info { padding-right: 8px; }
       .prompt-list .name { margin-bottom: 4px; }
       /* Actions are always visible in the options list (less surprise for power users) */
@@ -118,11 +123,36 @@
       .delete-btn { color: color-mix(in srgb, var(--muted) 80%, transparent); }
       .delete-btn:hover { color: #b91c1c; /* red on hover */ }
 
+      /* List animations and small UX refinements */
+      @keyframes fadeInSlideUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .prompt-list li {
+        animation: fadeInSlideUp 0.28s ease-out both;
+      }
+      /* Themed scrollbar for options prompt-list */
+      .prompt-list::-webkit-scrollbar { width: 10px; height: 10px; }
+      .prompt-list::-webkit-scrollbar-track { background: transparent; }
+      .prompt-list::-webkit-scrollbar-thumb {
+        background-color: color-mix(in srgb, var(--border) 60%, transparent);
+        border-radius: 6px;
+      }
+      .prompt-list::-webkit-scrollbar-thumb:hover { background-color: var(--border); }
+
       /* Dialog styling: ensure modal matches theme (dark/light) and override UA defaults */
       dialog.edit-dialog {
         border: none;
         background: transparent;
         color: var(--fg);
+      }
+      /* Dialog entrance */
+      dialog[open] {
+        animation: fadeInScaleUp 0.25s ease-out both;
+      }
+      @keyframes fadeInScaleUp {
+        from { opacity: 0; transform: scale(0.98); }
+        to { opacity: 1; transform: scale(1); }
       }
       dialog.edit-dialog form {
         background: var(--card) !important;

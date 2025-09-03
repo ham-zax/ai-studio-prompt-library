@@ -204,6 +204,14 @@ async function main() {
     }
     return undefined;
   });
+
+  // Populate version number in options footer
+  try {
+    const version = chrome.runtime.getManifest().version;
+    const versionEl = document.getElementById('version-number');
+    if (versionEl) versionEl.textContent = version;
+  } catch {}
+
 }
  
 main();

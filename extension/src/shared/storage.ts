@@ -38,6 +38,31 @@ function broadcastUpdate() {
  
 // Assemble state: settings/lastUsedPromptId are stored in chrome.storage.sync,
 // prompts are stored in chrome.storage.local to avoid sync per-item quota.
+/**
+ * One-time initialization logic. Should only be called from the background script's
+ * onInstalled listener. It checks if settings exist before running to be idempotent.
+ */
+export async function initializeStorage() {
+  const syncItems = await chrome.storage.sync.get('settings');
+  // If settings already exist, it means we've initialized before. Do nothing.
+  if (syncItems.settings) {
+    return;
+  }
+
+  // Create and persist the default state
+  await chrome.storage.local.set({ [`${PROMPT_KEY_PREFIX}${DEFAULT_PROMPT.id}`]: DEFAULT_PROMPT });
+  await chrome.storage.sync.set({
+    settings: DEFAULT_SETTINGS,
+    lastUsedPromptId: DEFAULT_PROMPT.id,
+    version: 1,
+  });
+  console.log('[AI Studio Prompts] First-time initialization complete.');
+}
+
+/**
+ * Retrieves the current state from storage. This function has NO side effects.
+ * It only reads the current state.
+ */
 export async function getState(): Promise<StorageSchema> {
   const syncItems = (await chrome.storage.sync.get()) as Record<string, any>;
   const localItems = (await chrome.storage.local.get()) as Record<string, any>;
@@ -52,17 +77,9 @@ export async function getState(): Promise<StorageSchema> {
     }
   }
 
-  if (prompts.length === 0) {
-    // Ensure at least one prompt exists
-    prompts.push(DEFAULT_PROMPT);
-    // persist default prompt locally and ensure sync keys exist
-    await chrome.storage.local.set({ [`${PROMPT_KEY_PREFIX}${DEFAULT_PROMPT.id}`]: DEFAULT_PROMPT });
-    await chrome.storage.sync.set({ settings: DEFAULT_SETTINGS, lastUsedPromptId: DEFAULT_PROMPT.id });
-  }
-
   return {
     prompts: prompts.sort((a, b) => (a.name > b.name ? 1 : -1)),
-    lastUsedPromptId: lastUsedPromptId ?? prompts[0]?.id,
+    lastUsedPromptId: lastUsedPromptId,
     settings,
     version: (syncItems.version as number) ?? 1,
   };
@@ -101,12 +118,15 @@ export async function upsertPrompt(
 
 export async function deletePrompt(id: string) {
   const key = `${PROMPT_KEY_PREFIX}${id}`;
+  const syncData = await chrome.storage.sync.get('lastUsedPromptId');
+
   await chrome.storage.local.remove(key);
 
-  // If deleted prompt was last used, update lastUsedPromptId to an existing prompt (if any)
-  const state = await getState();
-  if (state.lastUsedPromptId === id) {
-    await setLastUsedPrompt(state.prompts[0]?.id);
+  // If the deleted prompt was the last used one, we need to pick a new one.
+  if (syncData.lastUsedPromptId === id) {
+    const remainingPrompts = (await getState()).prompts;
+    // Set to the first remaining prompt, or undefined if the list is now empty.
+    await setLastUsedPrompt(remainingPrompts[0]?.id);
   }
   broadcastUpdate();
 }
@@ -131,11 +151,29 @@ export async function exportJson(): Promise<string> {
   return JSON.stringify(blob, null, 2);
 }
 
-export async function importJson(text: string) {
+export async function importJson(text: string, opts?: { force?: boolean }) {
   const parsed = JSON.parse(text);
   if (!parsed || !Array.isArray(parsed.prompts)) throw new Error('Invalid import file');
 
-  // Remove existing prompt_* keys from local storage
+  const prompts = parsed.prompts as Prompt[];
+
+  // Prevent accidental destructive imports: importing an empty prompts array would
+  // otherwise delete all existing prompts. Require explicit confirmation via opts.force.
+  if (prompts.length === 0 && !opts?.force) {
+    throw new Error(
+      'Import contains zero prompts. Aborted to avoid deleting all existing prompts. ' +
+      'Call importJson(text, { force: true }) to proceed if you really want to replace all prompts.'
+    );
+  }
+
+  // Validate prompts minimally (ensure ids exist) to avoid creating malformed keys
+  for (const p of prompts) {
+    if (!p || typeof p.id !== 'string' || p.id.trim() === '') {
+      throw new Error('Invalid prompt entry in import file (missing id)');
+    }
+  }
+
+  // Only remove existing prompt_* keys after validation has passed
   const localItems = (await chrome.storage.local.get()) as Record<string, any>;
   const keysToRemove = Object.keys(localItems).filter(k => k.startsWith(PROMPT_KEY_PREFIX));
   if (keysToRemove.length > 0) {
@@ -143,7 +181,6 @@ export async function importJson(text: string) {
   }
 
   const settings = { ...DEFAULT_SETTINGS, ...(parsed.settings || {}) } as Settings;
-  const prompts = parsed.prompts as Prompt[];
 
   // Prepare object mapping prompt keys to prompt values for a single set call to local
   const toSetLocal: Record<string, unknown> = {};

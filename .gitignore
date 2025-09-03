@@ -3,6 +3,9 @@ dist/
 *.log
 .DS_Store
 Thumbs.db
+.roomodes
+.kilocodemodes
+.bmad-core/*
 
 # Env
 .env

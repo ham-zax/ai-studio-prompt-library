@@ -1,5 +1,5 @@
 import type { Prompt } from '../shared/types';
-import { getState, setLastUsedPrompt } from '../shared/storage';
+import { getState, setLastUsedPrompt, initializeStorage } from '../shared/storage';
 import { pRemoveAllContextMenus, pCreateContextMenu } from '../shared/chrome-utils';
 
 // Ensure context menu rebuilds don't overlap (which can cause duplicate-id errors)
@@ -36,7 +36,10 @@ async function rebuildContextMenus() {
   return rebuildInFlight;
 }
 
-chrome.runtime.onInstalled.addListener(async () => { await rebuildContextMenus(); });
+chrome.runtime.onInstalled.addListener(async () => {
+  await initializeStorage();
+  await rebuildContextMenus();
+});
 chrome.runtime.onStartup.addListener(async () => { await rebuildContextMenus(); });
 
 chrome.storage.onChanged.addListener((changes: { [key: string]: chrome.storage.StorageChange }, areaName: string) => {

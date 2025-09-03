@@ -10,7 +10,7 @@
       .main-grid {
         display: grid;
         grid-template-columns: 320px 1fr;
-        gap: 32px;
+        gap: 16px;
         align-items: start;
         min-height: 0;
       }
@@ -48,12 +48,13 @@
       }
 
       /* Prompts column */
-      .prompts-column .card { display: flex; flex-direction: column; gap: 12px; }
+      .prompts-column .card { display: block; }
       .card-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
         gap: 12px;
+        padding-bottom: 12px;
       }
       .header-actions { display:flex; gap:8px; align-items:center; }
 
@@ -273,6 +274,19 @@
             </div>
             <p class="muted">Override the default method for finding the system instructions field. Use a valid CSS selector. Only change this if the extension stops working correctly.</p>
           </section>
+
+          
+      <p class="muted" style="text-align:center; margin-top:20px;">
+        Built by
+        <a href="https://x.com/ham_zax" target="_blank" rel="noopener noreferrer">@ham_zax</a>
+        ·
+        <a href="https://github.com/ham-zax/ai-studio-prompt-library" target="_blank" rel="noopener noreferrer">GitHub</a>
+        ·
+        <a href="https://forms.gle/WkQcvducV33Bzt84A" target="_blank" rel="noopener noreferrer">Feedback</a>
+      </p>
+          <p id="version-info" class="muted" style="text-align:center; margin-top:20px;">
+      Version <span id="version-number"></span>
+    </p>
         </div>
 
         <div class="prompts-column">
@@ -288,7 +302,7 @@
 
             <input type="hidden" id="editingId" />
 
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; justify-content:space-between; align-items:center; padding-bottom: 12px;">
               <div style="color:var(--muted); font-size:13px;">Use the button to add or edit prompts</div>
               <div>
                 <button id="add" class="btn-primary">Add Prompt</button>
@@ -321,20 +335,10 @@
         </div>
       </div>
 
-      <p class="muted" style="text-align:center; margin-top:20px;">
-        Built by
-        <a href="https://x.com/ham_zax" target="_blank" rel="noopener noreferrer">@ham_zax</a>
-        ·
-        <a href="https://github.com/ham-zax/ai-studio-prompt-library" target="_blank" rel="noopener noreferrer">GitHub</a>
-        ·
-        <a href="https://forms.gle/WkQcvducV33Bzt84A" target="_blank" rel="noopener noreferrer">Feedback</a>
-      </p>
 
       <script type="module" src="./main.ts"></script>
     </div>
 
-    <p id="version-info" class="muted" style="text-align:right; font-size:11px; position:fixed; bottom:8px; right:8px;">
-      Version <span id="version-number"></span>
-    </p>
+
   </body>
 </html>

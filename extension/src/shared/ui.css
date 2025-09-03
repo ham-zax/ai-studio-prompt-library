@@ -55,9 +55,9 @@ body {
     padding: 24px 32px;
     box-sizing: border-box;
   }
-h1 { font-size: 20px; margin: 24px 0 16px; }
+h1 { font-size: 20px; margin: 0 16px 16px 0; }
 h2 { font-size: 16px; margin: 0 0 12px; }
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); }
+.card { background: var(--card); border: 1px solid var(--border); padding: 16px; box-shadow: 0 1px 2px rgba(16,24,40,0.04); }
 .card + .card { margin-top: 16px; }
 
 .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
@@ -221,3 +221,90 @@ li .actions .copy-btn:hover {
 
 /* Popup and options actions handled independently; keep actions visible by default for popup.
    (Options list uses its own hover-reveal via .prompt-list .actions) */
+
+/* Popup UI polish: smoother and playful hover effects (scoped to popup) */
+.container.card #prompt-list li {
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease;
+  will-change: transform;
+}
+.container.card #prompt-list li:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 8px 24px rgba(16,24,40,0.12);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--card) 96%, var(--primary) 4%),
+    var(--card)
+  );
+  border-color: color-mix(in srgb, var(--border) 60%, var(--primary) 40%);
+}
+.container.card #prompt-list li:active {
+  transform: translateY(0) scale(0.997);
+  box-shadow: 0 2px 6px rgba(16,24,40,0.08);
+}
+
+/* Subtle title tint on hover */
+.container.card #prompt-list .name {
+  transition: color .2s ease;
+}
+.container.card #prompt-list li:hover .name {
+  color: var(--primary);
+}
+
+/* Primary Insert button: smoother lift and glow */
+.container.card #prompt-list .actions .btn-primary.insert-btn {
+  transition: transform .14s ease, box-shadow .14s ease, background .14s ease, filter .14s ease;
+}
+.container.card #prompt-list .actions .btn-primary.insert-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(16,24,40,0.10);
+  filter: saturate(1.05);
+}
+.container.card #prompt-list .actions .btn-primary.insert-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 2px rgba(16,24,40,0.06);
+}
+
+/* Copy button: tiny playful wobble */
+.container.card #prompt-list .actions .copy-btn {
+  transition: transform .16s ease, color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+.container.card #prompt-list .actions .copy-btn:hover {
+  transform: translateY(-1px) rotate(-3deg) scale(1.03);
+  color: var(--primary);
+  box-shadow: 0 6px 16px rgba(16,24,40,0.08);
+}
+.container.card #prompt-list .actions .copy-btn:active {
+  transform: translateY(0) rotate(0) scale(1);
+  box-shadow: none;
+}
+
+/* Keyboard focus support */
+.container.card #prompt-list li:focus-within {
+  outline: 2px solid color-mix(in srgb, var(--ring) 60%, transparent);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+/* Fix: preserve left/right border on hover in popup by adding side padding and using a ring instead of border change */
+.container.card #prompt-list {
+  padding-inline: 6px; /* space so hover effects aren't clipped */
+}
+
+.container.card #prompt-list li {
+  background-clip: padding-box; /* keep background inside border */
+}
+
+/* Override previous hover to avoid clipping and keep crisp edges */
+.container.card #prompt-list li:hover {
+  transform: translateY(-2px); /* no scale to prevent side clipping */
+  /* Add a subtle ring that doesn't affect layout; ensures visible left/right edges */
+  box-shadow:
+    0 8px 24px rgba(16,24,40,0.12),
+    0 0 0 1px color-mix(in srgb, var(--border) 60%, var(--primary) 40%);
+  border-color: transparent; /* rely on ring for edge */
+}
+
+.container.card #prompt-list li:active {
+  box-shadow:
+    0 2px 6px rgba(16,24,40,0.08),
+    0 0 0 1px color-mix(in srgb, var(--border) 60%, var(--primary) 40%);
+}

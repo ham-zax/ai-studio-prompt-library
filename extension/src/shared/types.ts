@@ -20,6 +20,8 @@ export interface Settings {
   // When true, show a confirmation dialog before deleting a prompt.
   // Users may turn this off to speed up deletions.
   confirmDeletePrompt?: boolean; // default: true
+  // When true, automatically close the system prompt panel after inserting a prompt, if the extension opened it.
+  autoClosePanel?: boolean; // default: false
   customSelector?: string; // default: undefined
 }
 

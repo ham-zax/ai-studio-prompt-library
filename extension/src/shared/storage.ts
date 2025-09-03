@@ -10,6 +10,7 @@ const DEFAULT_SETTINGS: Settings = {
   theme: 'auto',
   confirmOverwriteSystem: true,
   confirmDeletePrompt: true,
+  autoClosePanel: false,
 };
 
 const DEFAULT_PROMPT: Prompt = {

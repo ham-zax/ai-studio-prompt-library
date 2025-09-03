@@ -20,6 +20,7 @@ async function refresh() {
   el<HTMLInputElement>('showContextMenu').checked = !!state.settings.showContextMenu;
   el<HTMLInputElement>('confirmOverwriteSystem').checked = state.settings.confirmOverwriteSystem ?? true;
   el<HTMLInputElement>('confirmDeletePrompt').checked = state.settings.confirmDeletePrompt ?? true;
+  el<HTMLInputElement>('autoClosePanel').checked = state.settings.autoClosePanel ?? false;
   el<HTMLSelectElement>('theme').value = state.settings.theme ?? 'auto';
   el<HTMLInputElement>('customSelector').value = state.settings.customSelector ?? '';
   applyTheme(state.settings.theme ?? 'auto');
@@ -111,6 +112,12 @@ async function main() {
   el<HTMLInputElement>('confirmDeletePrompt').addEventListener('change', async (e) => {
     const value = (e.target as HTMLInputElement).checked;
     await setSettings({ confirmDeletePrompt: value });
+  });
+ 
+  // Auto-close system panel after insert (only closes if the extension opened it)
+  el<HTMLInputElement>('autoClosePanel').addEventListener('change', async (e) => {
+    const value = (e.target as HTMLInputElement).checked;
+    await setSettings({ autoClosePanel: value });
   });
 
   el<HTMLSelectElement>('theme').addEventListener('change', async (e) => {

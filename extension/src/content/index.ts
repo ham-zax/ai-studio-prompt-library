@@ -128,7 +128,7 @@ async function handleInsertAsync(text: string, mode: InsertMode = 'replace') {
   const state = await getState();
 
   // Ensure system instructions panel is open if needed
-  await openSystemPanelIfNeeded(state.settings);
+  const panelState = await openSystemPanelIfNeeded(state.settings);
 
   let target: HTMLElement | null = findSystemTextarea(state.settings);
   if (!target || !isEditable(target)) {
@@ -166,6 +166,14 @@ async function handleInsertAsync(text: string, mode: InsertMode = 'replace') {
     }
   }
   applyInsert(target, text, mode);
+
+  // If the script opened the panel and the setting is enabled, close it again.
+  if (panelState?.didClick && (state.settings.autoClosePanel ?? false)) {
+    const btn = findSystemButton();
+    if (btn) {
+      btn.click();
+    }
+  }
 }
 
 chrome.runtime.onMessage.addListener((msg: RuntimeMessage, _sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
@@ -288,16 +296,21 @@ async function waitForSystemTextarea(timeoutMs = 5000, settings?: Settings): Pro
    });
  }
 
-async function openSystemPanelIfNeeded(settings?: Settings): Promise<boolean> {
+async function openSystemPanelIfNeeded(settings?: Settings): Promise<{ success: boolean; didClick: boolean; }> {
   // If already visible, nothing to do
   const present = findSystemTextarea(settings);
-  if (present) return true;
+  if (present) {
+    return { success: true, didClick: false };
+  }
 
   const btn = findSystemButton();
-  if (!btn) return false;
+  if (!btn) {
+    // Can't find the button, so we can't open it.
+    return { success: false, didClick: false };
+  }
   btn.click();
   const ta = await waitForSystemTextarea(5000, settings);
-  return !!ta;
+  return { success: !!ta, didClick: true };
 }
 
 // Observe SPA mutations; if needed, we could auto-attach helpers. Here we just keep the file alive.

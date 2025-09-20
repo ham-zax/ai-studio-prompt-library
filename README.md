@@ -4,11 +4,13 @@ Save and quickly insert reusable System Prompts on Google AI Studio. Private by 
 
 ## Features
 
-- Save, edit, delete prompts; import/export JSON.
-- Popup: fast search + Insert and Copy.
-- Options: CRUD + settings (insert mode, theme, confirmations, auto-close panel, custom selector).
-- Hotkeys and context menu for speed.
-- Resilient insertion with layered selectors and escape hatch.
+- **Smart Prompt Management**: Save, edit, delete prompts; import/export JSON with alphabetical sorting.
+- **Most Recently Used (MRU) Sorting**: Prompts automatically sort by usage - your most recent prompts appear first.
+- **Fast Access**: Popup with search + Insert and Copy functionality.
+- **Comprehensive Settings**: Insert mode, theme, confirmations, auto-close panel, custom selector.
+- **Improved Auto-Close**: Enhanced dialog detection for reliable auto-close after insertion.
+- **Hotkeys and Context Menu**: Quick access for power users.
+- **Resilient Insertion**: Layered selectors with fallback strategies for reliable prompt insertion.
 
 ## Install
 
@@ -44,8 +46,9 @@ pnpm build
 
 1. Open a chat in Google AI Studio.
 2. Press Alt+Shift+1 to open the popup, search, and click Insert.
-3. Or right‑click → “Open System Prompts…” or “Insert last prompt”.
-4. Manage prompts and settings at chrome-extension://…/options or via toolbar → Options.
+3. Or right‑click → "Open System Prompts…" or "Insert last prompt".
+4. **Smart Sorting**: Your most recently used prompts will appear at the top for quick access.
+5. Manage prompts and settings at chrome-extension://…/options or via toolbar → Options.
 
 ## Shortcuts
 

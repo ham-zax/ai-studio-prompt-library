@@ -167,10 +167,12 @@ export async function setSettings(newSettings: Partial<Settings>) {
 
 export async function exportJson(): Promise<string> {
   const state = await getState();
+  // For exports, use alphabetical sorting for predictable file output
+  const exportPrompts = state.prompts.slice().sort((a, b) => a.name.localeCompare(b.name));
   const blob = {
     version: state.version,
     settings: state.settings,
-    prompts: state.prompts,
+    prompts: exportPrompts,
   };
   return JSON.stringify(blob, null, 2);
 }

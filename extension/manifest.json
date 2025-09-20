@@ -3,7 +3,7 @@
   "name": "AI Studio Prompt Library",
   "short_name": "System Prompts",
   "description": "Supercharge your workflow in Google AI Studio. Manage and instantly insert your favorite system prompts without leaving the page.",
-  "version": "0.2",
+  "version": "0.3",
   "homepage_url": "https://github.com/ham-zax/ai-studio-prompt-library",
   "icons": {
     "16": "extension/icons/icon-16.png",

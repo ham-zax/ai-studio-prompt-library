@@ -1,6 +1,6 @@
 import { getState, setLastUsedPrompt } from '../shared/storage';
 import type { Prompt } from '../shared/types';
-import { applyTheme, renderPromptList } from '../shared/ui-utils';
+import { applyTheme, renderPromptList, sortPromptsByMRU } from '../shared/ui-utils';
 
 async function getActiveTabId(): Promise<number | undefined> {
   const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
@@ -41,7 +41,8 @@ async function main() {
   const ul = document.getElementById('prompt-list')!;
 
   // Local mutable copy of prompts for efficient filtering and patching
-  let localPrompts = state.prompts.slice().sort((a, b) => (a.name > b.name ? 1 : -1));
+  // Use MRU sorting - most recently used first, then alphabetical for unused prompts
+  let localPrompts = sortPromptsByMRU(state.prompts.slice());
 
   const refreshList = () => {
     const lowerQuery = input.value.toLowerCase();
@@ -105,7 +106,7 @@ async function main() {
     if (!detail?.action) {
       // Fallback: generic update — re-fetch full state
       getState().then(newState => {
-        localPrompts = newState.prompts.slice().sort((a, b) => (a.name > b.name ? 1 : -1));
+        localPrompts = sortPromptsByMRU(newState.prompts.slice());
         refreshList();
       }).catch((e) => console.warn('[AI Studio Popup] failed to refresh state', e));
       return;
@@ -116,7 +117,7 @@ async function main() {
       case 'updated':
         // Re-sync full prompts list to guarantee consistency for edits/adds
         getState().then(s => {
-          localPrompts = s.prompts.slice().sort((a,b) => a.name > b.name ? 1 : -1);
+          localPrompts = sortPromptsByMRU(s.prompts.slice());
           refreshList();
         }).catch((e) => console.warn('[AI Studio Popup] failed to reload prompts', e));
         break;
@@ -127,7 +128,7 @@ async function main() {
         } else {
           // Unknown id — fallback to full refresh
           getState().then(newState => {
-            localPrompts = newState.prompts.slice().sort((a, b) => (a.name > b.name ? 1 : -1));
+            localPrompts = sortPromptsByMRU(newState.prompts.slice());
             refreshList();
           }).catch((e) => console.warn('[AI Studio Popup] failed to refresh after delete', e));
         }
@@ -136,14 +137,14 @@ async function main() {
       case 'initialized':
         // Bulk change — full refresh
         getState().then(newState => {
-          localPrompts = newState.prompts.slice().sort((a, b) => (a.name > b.name ? 1 : -1));
+          localPrompts = sortPromptsByMRU(newState.prompts.slice());
           refreshList();
         }).catch((e) => console.warn('[AI Studio Popup] failed to refresh after import', e));
         break;
       default:
         // Unknown action — full refresh for safety
         getState().then(newState => {
-          localPrompts = newState.prompts.slice().sort((a, b) => (a.name > b.name ? 1 : -1));
+          localPrompts = sortPromptsByMRU(newState.prompts.slice());
           refreshList();
         }).catch((e) => console.warn('[AI Studio Popup] failed to refresh (unknown action)', e));
     }

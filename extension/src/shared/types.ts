@@ -10,6 +10,7 @@ export interface Prompt {
   favorite?: boolean;
   createdAt: number;
   updatedAt: number;
+  lastUsedAt?: number; // Track when prompt was last used for MRU sorting
 }
 
 export interface Settings {

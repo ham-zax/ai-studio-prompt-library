@@ -1,6 +1,6 @@
 import { getState, setSettings, upsertPrompt, deletePrompt, exportJson, importJson } from '../shared/storage';
 import type { Prompt, Settings } from '../shared/types';
-import { applyTheme, renderPromptList } from '../shared/ui-utils';
+import { applyTheme, renderPromptList, sortPromptsByMRU } from '../shared/ui-utils';
 
 function el<T extends HTMLElement>(id: string) { return document.getElementById(id) as T; }
 
@@ -26,7 +26,7 @@ async function refresh() {
   applyTheme(state.settings.theme ?? 'auto');
 
   const ul = el<HTMLUListElement>('prompt-list');
-  renderPromptList(ul, state.prompts, (p) => {
+  renderPromptList(ul, sortPromptsByMRU(state.prompts), (p) => {
     const actions = document.createElement('div');
     actions.className = 'actions';
  

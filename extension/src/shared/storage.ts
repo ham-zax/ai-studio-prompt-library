@@ -1,4 +1,5 @@
 import type { Prompt, StorageSchema, Settings } from './types';
+import { sortPromptsByMRU } from './ui-utils';
 
 // Use a prefix to store each prompt; prompts will be persisted in chrome.storage.local
 // to avoid chrome.storage.sync per-item quota limits for large content.
@@ -85,7 +86,7 @@ export async function getState(): Promise<StorageSchema> {
   }
 
   return {
-    prompts: prompts.sort((a, b) => (a.name > b.name ? 1 : -1)),
+    prompts: sortPromptsByMRU(prompts),
     lastUsedPromptId: lastUsedPromptId,
     settings,
     version: (syncItems.version as number) ?? 1,
@@ -141,6 +142,20 @@ export async function deletePrompt(id: string) {
 }
 
 export async function setLastUsedPrompt(id: string | undefined) {
+  if (id) {
+    // Update the prompt's lastUsedAt timestamp when it's used
+    const key = `${PROMPT_KEY_PREFIX}${id}`;
+    const existingItems = (await chrome.storage.local.get(key)) as Record<string, any>;
+    const existing = existingItems[key] as Prompt | undefined;
+    
+    if (existing) {
+      const updatedPrompt: Prompt = {
+        ...existing,
+        lastUsedAt: Date.now()
+      };
+      await chrome.storage.local.set({ [key]: updatedPrompt });
+    }
+  }
   await chrome.storage.sync.set({ lastUsedPromptId: id });
 }
 

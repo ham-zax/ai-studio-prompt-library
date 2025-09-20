@@ -169,9 +169,16 @@ async function handleInsertAsync(text: string, mode: InsertMode = 'replace') {
 
   // If the script opened the panel and the setting is enabled, close it again.
   if (panelState?.didClick && (state.settings.autoClosePanel ?? false)) {
-    const btn = findSystemButton();
-    if (btn) {
-      btn.click();
+    // First try to find the dialog close button (for when the panel is in dialog mode)
+    const dialogCloseBtn = findDialogCloseButton();
+    if (dialogCloseBtn) {
+      dialogCloseBtn.click();
+    } else {
+      // Fallback to the system button toggle (for when the panel is inline)
+      const systemBtn = findSystemButton();
+      if (systemBtn) {
+        systemBtn.click();
+      }
     }
   }
 }
@@ -193,6 +200,29 @@ function findSystemButton(root: ParentNode = document): HTMLButtonElement | null
     'button[aria-label="System instructions"], button[data-test-si]'
   );
   return (btn as HTMLButtonElement) || null;
+}
+
+function findDialogCloseButton(root: ParentNode = document): HTMLButtonElement | null {
+  // Look for Material Angular dialog close button with multiple selector strategies
+  const selectors = [
+    'button[data-test-close-button]', // Primary selector from the provided HTML
+    'button[mat-dialog-close]', // Material dialog close attribute
+    'button[aria-label="Close panel"]', // Aria label from provided HTML
+    '.mat-mdc-dialog-container button[aria-label*="Close"]', // More specific Material dialog close
+    '.cdk-overlay-pane button[aria-label*="Close"]', // CDK overlay close button
+  ];
+  
+  for (const selector of selectors) {
+    try {
+      const btn = root.querySelector(selector);
+      if (btn && isVisible(btn)) {
+        return btn as HTMLButtonElement;
+      }
+    } catch {
+      // Invalid selector, continue to next
+    }
+  }
+  return null;
 }
 
 async function waitForSystemTextarea(timeoutMs = 5000, settings?: Settings): Promise<HTMLTextAreaElement | null> {

@@ -1,5 +1,23 @@
 import type { Prompt, Settings } from './types';
 
+/**
+ * Sort prompts by Most Recently Used (MRU) order.
+ * Most recently used prompts appear first, then alphabetical order for unused prompts.
+ */
+export function sortPromptsByMRU(prompts: Prompt[]): Prompt[] {
+  return prompts.sort((a, b) => {
+    const aLastUsed = a.lastUsedAt || 0;
+    const bLastUsed = b.lastUsedAt || 0;
+    
+    if (aLastUsed !== bLastUsed) {
+      return bLastUsed - aLastUsed; // Most recent first
+    }
+    
+    // If both have same lastUsedAt (or both are 0), sort alphabetically
+    return a.name.localeCompare(b.name);
+  });
+}
+
 export function applyTheme(theme: Settings['theme']) {
   const root = document.documentElement;
   if (theme === 'auto') {

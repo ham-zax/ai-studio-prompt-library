@@ -1,8 +1,26 @@
 # AI Studio Prompt Library (Chrome MV3)
 
-Save and quickly insert reusable System Prompts on Google AI Studio. Private by design. No network calls.
+Tired of endlessly copying and pasting the same system instructions in Google AI Studio? Supercharge your workflow with the AI Studio Prompt Library!
 
-## Features
+This is a lightweight, privacy-first Chrome extension designed to give you a powerful, reusable library for your system prompts. Never type the same instructions twice.
+
+## Key Features
+
+- 🚀 ONE-CLICK INSERTION — Instantly add prompts to the System instructions field. Supports replacing, appending, or prepending text.
+- 🗂️ EFFORTLESS MANAGEMENT — A clean options page lets you create, edit, delete, and organize all your prompts.
+- ⚡ FAST ACCESS — Launch a quick-search palette with a keyboard shortcut (Ctrl+Shift+L) or use the context menu to insert the last prompt.
+- 📂 IMPORT & EXPORT — Easily back up your library to a JSON file or import prompts from a shared file. Exports are alphabetically sorted for predictability.
+- 🔒 100% PRIVATE BY DESIGN — Your prompts are your own. The extension works entirely offline and makes absolutely no external network calls.
+- 🛠️ FUTURE-PROOF — An advanced custom selector option ensures the extension remains functional even if Google updates the AI Studio layout.
+- 🌗 SEAMLESS UI — Automatically adapts to your system's light or dark theme.
+
+## Who is this for?
+
+This tool is built for AI developers, researchers, writers, and anyone who wants a more organized and efficient workflow in Google AI Studio.
+
+Our goal is simple: to make your time in AI Studio more productive and creative.
+
+Have feedback or a feature idea? We'd love to hear from you — use the "Feedback" link on the options page.
 
 - **Smart Prompt Management**: Save, edit, delete prompts; import/export JSON with alphabetical sorting.
 - **Most Recently Used (MRU) Sorting**: Prompts automatically sort by usage - your most recent prompts appear first.
